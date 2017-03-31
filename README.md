@@ -13,7 +13,7 @@ abas-watchdog ruft in einem festen Intervall ein in C# geschriebenes Programm au
 welches nach einem "wineks" Prozess sucht und alle Fenster dieses Prozesses
 aufzeichnet (id, Fenstertitel).
 
-Dadurch ist es möglich zu erkenn
+Dadurch ist es möglich zu erkennen
 - das ein neues Fenster geöffnet wurde
 - das eine Aktionen im Fenster durchgeführt wurde (neuen Datensatz geladen, Infosystem ausgeführt,...)
 - das ein Fenster geschlossen wurde
