@@ -1,0 +1,57 @@
+{
+    "name": "abas-watchdog",
+    "productName": "abas-watchdog",
+    "version": "0.0.1",
+    "description": "a License Watchdog for abas-ERP",
+    "homepage": "",
+    "main": "main.js",
+    "scripts": {
+        "start": "npm install && electron .",
+        "pack": "build --dir",
+        "dist:x64": "build -w --x64",
+        "dist:ia32": "build -w --ia32"
+    },
+    "repository": "",
+    "build": {
+        "appId": "de.mrothenbuecher.abas-watchdog",
+        "compression":"maximum",
+        "asar": true,
+        "files":[
+          "!VisualStudio${/*}",
+          "!Test - abas-window-watcher.bat",
+          "!**/*.yml",
+          "!**/*.md"
+        ],
+        "extraFiles": [{
+            "from": "lang",
+            "to": "lang",
+            "filter": [
+                "*.json"
+            ]
+        }, "abas-window-watcher.exe", "settings.json"],
+        "mac": {
+            "category": "public.app-category.utilities"
+        },
+        "win": {
+            "icon": "images/abas.ico"
+        }
+    },
+    "keywords": [
+        "abas",
+        "abas-ERP",
+        "license",
+        "management"
+    ],
+    "author": "mrothenbuecher",
+    "dependencies": {
+        "electron-debug": "^1.1.0",
+        "jquery": "^3.1.1",
+        "jsonfile": "^2.4.0",
+        "material-design-lite": "^1.2.1",
+        "toastr": "^2.1.2"
+    },
+    "devDependencies": {
+        "electron": "^1.4.1",
+        "electron-builder": "^10.17.1"
+    }
+}

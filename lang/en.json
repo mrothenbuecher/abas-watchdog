@@ -1,0 +1,17 @@
+{
+    "@metadata": {
+        "authors": [
+            "mrothenbuecher"
+        ],
+        "last-updated": "2017-01-06",
+        "locale": "de"
+    },
+    "language":"lang",
+    "window":"window",
+    "open_since":"open since",
+    "last_activity":"your last activity: ",
+    "dialog_title":"please release abas license",
+    "dialog_warning":"If you do not need a license, please close",
+    "dialog_error":"They are seemingly inactive. Close the abas ERP.",
+    "last_closed":"closed last window: "
+}

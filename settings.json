@@ -1,0 +1,8 @@
+{
+    "warning_time_min": 25,
+    "error_time_min": 30,
+    "close_time_min": 1,
+    "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP"],
+    "refresh_interval_ms": 1000,
+    "lang":"de"
+}

@@ -1,0 +1,7 @@
+node_modules
+*.db
+*debug*
+*log*
+dist
+VisualStudio/ConsoleApplication1/ConsoleApplication1/bin/*
+VisualStudio/ConsoleApplication1/ConsoleApplication1/obj/*

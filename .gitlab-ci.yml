@@ -1,0 +1,23 @@
+image: electronuserland/electron-builder:wine
+
+stages:
+  - buildx64
+  - buildia32
+
+buildx64:
+  stage: buildx64
+  script: 
+    - npm install
+    - npm run dist:x64
+  artifacts:
+    paths:
+    - dist/5ld Setup 0.0.1.exe
+
+buildia32:
+  stage: buildia32
+  script:
+    - npm install
+    - npm run dist:ia32
+  artifacts:
+    paths:
+    - dist/5ld Setup 0.0.1.exe
