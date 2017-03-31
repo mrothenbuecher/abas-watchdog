@@ -74,32 +74,44 @@ namespace AbasWindowWatcher
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Process[] processes = Process.GetProcessesByName("wineks");
-            Console.Write("[");
-            foreach (Process process in processes)
+
+            if (args.Length == 1 && args[0].ToLower() == "kill")
             {
-                IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
-
-                bool first = true;
-                foreach (KeyValuePair<IntPtr, Window> kvp in windows)
+                foreach (Process process in processes)
                 {
-                    String title = kvp.Value.Title;
-
-                    title = Regex.Replace(title, "(\")", "\\\"", RegexOptions.IgnoreCase);
-
-                    title = "{\"windowtitle\":\"" + title + "\", \"id\":"+kvp.Value.ProcessId+"}";
-
-                    if (first)
-                    {
-                        Console.Write("{0}", title);
-                        first = false;
-                    }
-                    else
-                    {
-                        Console.Write(",{0}", title);
-                    }
+                    process.Kill();
                 }
             }
-            Console.Write("]");
+            else
+            {
+
+                Console.Write("[");
+                foreach (Process process in processes)
+                {
+                    IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
+
+                    bool first = true;
+                    foreach (KeyValuePair<IntPtr, Window> kvp in windows)
+                    {
+                        String title = kvp.Value.Title;
+
+                        title = Regex.Replace(title, "(\")", "\\\"", RegexOptions.IgnoreCase);
+
+                        title = "{\"windowtitle\":\"" + title + "\", \"id\":" + kvp.Value.ProcessId + "}";
+
+                        if (first)
+                        {
+                            Console.Write("{0}", title);
+                            first = false;
+                        }
+                        else
+                        {
+                            Console.Write(",{0}", title);
+                        }
+                    }
+                }
+                Console.Write("]");
+            }
         }
     }
 }
