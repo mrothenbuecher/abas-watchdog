@@ -84,30 +84,41 @@ namespace AbasWindowWatcher
             }
             else
             {
+                bool singleton = (args.Length == 1 && args[0].ToLower() == "singleton");
+                
+                bool first = true;
 
                 Console.Write("[");
                 foreach (Process process in processes)
                 {
-                    IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
-
-                    bool first = true;
-                    foreach (KeyValuePair<IntPtr, Window> kvp in windows)
+                    if(!first && singleton)
                     {
-                        String title = kvp.Value.Title;
+                        process.Kill();
+                    }
+                    if (first)
+                    {
+                        IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
 
-                        title = Regex.Replace(title, "(\")", "\\\"", RegexOptions.IgnoreCase);
-
-                        title = "{\"windowtitle\":\"" + title + "\", \"id\":" + kvp.Value.ProcessId + "}";
-
-                        if (first)
+                        bool foo = true;
+                        foreach (KeyValuePair<IntPtr, Window> kvp in windows)
                         {
-                            Console.Write("{0}", title);
-                            first = false;
+                            String title = kvp.Value.Title;
+
+                            title = Regex.Replace(title, "(\")", "\\\"", RegexOptions.IgnoreCase);
+
+                            title = "{\"windowtitle\":\"" + title + "\", \"id\":" + kvp.Value.ProcessId + "}";
+
+                            if (foo)
+                            {
+                                Console.Write("{0}", title);
+                                foo = false;
+                            }
+                            else
+                            {
+                                Console.Write(",{0}", title);
+                            }
                         }
-                        else
-                        {
-                            Console.Write(",{0}", title);
-                        }
+                        first = false;
                     }
                 }
                 Console.Write("]");

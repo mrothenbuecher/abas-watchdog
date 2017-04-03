@@ -1,3 +1,3 @@
 @ECHO off
-abas-window-watcher.exe
+abas-window-watcher.exe singleton
 PAUSE

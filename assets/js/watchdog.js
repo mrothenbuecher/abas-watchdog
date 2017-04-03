@@ -1,10 +1,12 @@
 var jsonfile = require('jsonfile');
 // default Settings
 var settings = {
-    "warning_time_min": 25,
-    "error_time_min": 30,
+    "warning_time_min": 10,
+    "error_time_min": 15,
     "close_time_min": 1,
-    "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP"],
+    "kill_time_min": 0,
+    "singleton": false,
+    "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
     "refresh_interval_ms": 1000,
     "lang": "de",
     "dir":""
@@ -53,13 +55,13 @@ jQuery.extend(settings, jsonfile.readFileSync(settings.dir+'settings.json'));
                 var ignore = false;
                 // prüfen ob der Fenstertitel ignoriert werden soll
                 $.each(settings.ignore_windows_titles, function(i, title) {
-                    ignore = ignore || title == val.windowtitle;
+                    ignore = ignore || val.windowtitle.indexOf(title) !== -1 ;
                 });
                 return ignore;
             };
 
             // abas window watcher exe ausführen
-            exec(settings.dir+"abas-window-watcher.exe", function(err, text) {
+            exec(settings.dir+"abas-window-watcher.exe", settings.singleton?["singleton"]:[""], function(err, text) {
                 if (!err) {
                     var data = JSON.parse(text);
                     $('#windows').html("");
@@ -137,15 +139,21 @@ jQuery.extend(settings, jsonfile.readFileSync(settings.dir+'settings.json'));
 
                             // wenn es nicht ignoriert werden kann muss geprüft werden
                             // wie lange das Fenster schon aktiv ist
+                            var ignore = true;
                             if (!ignoreWindow(val)) {
+                                ignore = false;
                                 if (currentTime < idleTime) {
                                     idleTime = currentTime;
                                 }
                             }
 
                             var row = "<tr>";
-                            row += "<td>" + val.windowtitle + "</td>";
-                            row += "<td>" + msToTime(currentTime) + "</td>";
+                            if(ignore){
+                              row += "<td colspan=\"2\">" + val.windowtitle + "</td>";
+                            }else{
+                              row += "<td>" + val.windowtitle + "</td>";
+                              row += "<td>" + msToTime(currentTime) + "</td>";
+                            }
                             row += "</tr>";
                             $('#windows').append(row);
 
@@ -165,6 +173,7 @@ jQuery.extend(settings, jsonfile.readFileSync(settings.dir+'settings.json'));
                             idleTime = idleTime / 1000 / 60.0;
                             lastClosed = lastClosed / 1000 / 60.0;
 
+                            // Warnung ausgeben
                             if (idleTime > settings.warning_time_min && lastClosed > settings.close_time_min) {
                                 if (!notif) {
                                     notif = new window.Notification($.i18n("dialog_title"), {
@@ -176,8 +185,14 @@ jQuery.extend(settings, jsonfile.readFileSync(settings.dir+'settings.json'));
                                     };
                                 }
                             }
+                            // Fehler ausgeben
                             if (idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                                 dialog.showErrorBox($.i18n("dialog_title"), $.i18n("dialog_error"));
+                            }
+
+                            // Programm beenden
+                            if (settings.kill_time_min > 0 && idleTime > settings.kill_time_min) {
+                                  exec(settings.dir+"abas-window-watcher.exe kill", function(err, text) {});
                             }
                         } else {
                             $('#activity-label').text("");
