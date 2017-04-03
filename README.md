@@ -1,7 +1,7 @@
 
 # abas-watchdog
 
-abas watchdog ist eine (electron app)[https://electron.atom.io/] welche
+abas watchdog ist eine [electron app](https://electron.atom.io/) welche
 dazu dient die Lizenzverwendung an einem Arbeitsplatz zu überwachen.
 
 Es weist den Anwender darauf hin, falls dieser über einen bestimmten Zeitraum keine Aktivität im abas zeigt,
