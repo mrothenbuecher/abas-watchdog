@@ -1,30 +1,43 @@
-// var jsonfile = require('jsonfile');
-// default Settings
-var settings = {
-    "warning_time_min": 10,
-    "error_time_min": 15,
-    "close_time_min": 1,
-    "kill_time_min": 0,
-    "singleton": false,
-    "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
-    "refresh_interval_ms": 1000,
-    "lang": "de",
-    "dir": ""
-};
 
-var fs = require('fs');
-if (fs.existsSync("watchdog")) {
-    settings.dir = "watchdog/";
+const url = require('url')
+const path = require('path')
+
+const remote = require('electron').remote;
+const BrowserWindow = remote.BrowserWindow;
+
+var errorwindow = null;
+
+var es_client = null;
+
+if (settings.elasticsearch) {
+    var elasticsearch = require('elasticsearch');
+
+    es_client = new elasticsearch.Client({
+        host: settings.elasticsearch.host
+    });
 }
 
-var contents = fs.readFileSync(settings.dir + 'settings.json');
+// status an elasticsearch senden
+var sendStatus = function(status) {
+    if (es_client) {
+
+        var d = new Date();
+        var n = d.toISOString();
+
+        var os = require("os");
+        status.hostname = os.hostname();
+        status.timestamp = n;
+
+        es_client.index({
+            index: 'abas-watchdog',
+            type: 'status',
+            body: status
+        });
+
+    }
+};
 
 if (contents) {
-
-    var jsonContent = JSON.parse(contents);
-
-    // Einstellung aus Datei lesen
-    jQuery.extend(settings, jsonContent);
 
     (function() {
         var exec = require('child_process').execFile;
@@ -56,6 +69,27 @@ if (contents) {
 
             // Methode welche die ganze Arbeit übernimmt
             var dog = function() {
+
+                var makeError = function(){
+                  if(!errorwindow){
+                    errorwindow = new BrowserWindow({width: 300, height: 150,icon: __dirname + '/images/abas.ico'});
+                    errorwindow.setMenu(null);
+
+                    errorwindow.loadURL(url.format({
+                        pathname: path.join(__dirname, 'error.html'),
+                        protocol: 'file:',
+                        slashes: true
+                    }));
+
+                    //errorwindow.openDevTools();
+
+                    errorwindow.on('close', function(e) {
+                          e.preventDefault();
+                          errorwindow = null;
+                          //TODO Log
+                    });
+                  }
+                };
 
                 var ignoreWindow = function(val) {
                     var ignore = false;
@@ -101,6 +135,14 @@ if (contents) {
                                         // als inaktiv markieren
                                         foo.active = false;
                                         windows[j] = foo;
+
+                                        var status = {};
+                                        status.windowtitle = foo.windowtitle;
+                                        status.windowid = foo.id;
+                                        status.windowstatus = "closed";
+
+                                        sendStatus(status);
+
                                     }
                                 } else {
                                     // für das Inaktive Fenster den Zeitraum seit dem Schließen berechnen
@@ -193,7 +235,7 @@ if (contents) {
                                 }
                                 // Fehler ausgeben
                                 if (idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
-                                    dialog.showErrorBox($.i18n("dialog_title"), $.i18n("dialog_error"));
+                                    makeError();
                                 }
 
                                 // Programm beenden
@@ -222,5 +264,5 @@ if (contents) {
     })();
 
 } else {
-  toastr['error']('couldn`t find settings.json');
+    toastr['error']('couldn`t find settings.json');
 }

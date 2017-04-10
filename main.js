@@ -79,7 +79,7 @@ function createWindow() {
         tray.setHighlightMode('never');
     });
 
-    // Hauptfesnter wird nicht geschlossen nur versteckt
+    // Hauptfenster wird nicht geschlossen nur versteckt
     mainWindow.on('close', function(e) {
         if (!force_quit) {
             e.preventDefault();
