@@ -1,4 +1,7 @@
+var fs = require('fs');
 const electron = require('electron')
+
+eval(fs.readFileSync('assets/js/settings.js') + '');
 
 // dafür sorgen das die devtools angezeigt werden
 
@@ -38,32 +41,41 @@ function createWindow() {
 
     var force_quit = false;
 
-    const contextMenu = Menu.buildFromTemplate([{
-            label: 'show',
-            type: 'normal',
-            click: function() {
-                mainWindow.show();
-            }
-        },
-        {
+    var menu = [];
+
+    menu.push({
+        label: 'show',
+        type: 'normal',
+        click: function() {
+            mainWindow.show();
+        }
+    });
+
+    if (settings.allow_devtools) {
+        menu.push({
             label: 'devtools',
             type: 'normal',
             click: function() {
                 mainWindow.openDevTools();
             }
-        },
-        {
+        });
+    }
+
+    if (settings.allow_quit) {
+        menu.push({
             type: 'separator'
-        },
-        {
+        });
+        menu.push({
             label: 'quit',
             type: 'normal',
             click: function() {
                 force_quit = true;
                 mainWindow.close();
             }
-        }
-    ]);
+        });
+    }
+
+    const contextMenu = Menu.buildFromTemplate(menu);
 
     tray.setContextMenu(contextMenu);
 

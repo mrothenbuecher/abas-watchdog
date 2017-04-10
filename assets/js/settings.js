@@ -5,11 +5,21 @@ var settings = {
     "kill_time_min": 0,
     "singleton": false,
     "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
-    "refresh_interval_ms": 1000,
+    "refresh_interval_ms": 500,
     "lang": "de",
     "elasticsearch": null,
-    "dir": ""
+    "dir": "",
+    "allow_quit": true,
+    "allow_devtools": false
 };
+
+function extend(){
+    for(var i=1; i<arguments.length; i++)
+        for(var key in arguments[i])
+            if(arguments[i].hasOwnProperty(key))
+                arguments[0][key] = arguments[i][key];
+    return arguments[0];
+}
 
 var fs = require('fs');
 if (fs.existsSync("watchdog")) {
@@ -21,5 +31,7 @@ var contents = fs.readFileSync(settings.dir + 'settings.json');
 if(contents){
   var jsonContent = JSON.parse(contents);
   // Einstellung aus Datei lesen
-  jQuery.extend(settings, jsonContent);
+  settings = extend(settings, jsonContent);
+
+  console.log("file found");
 }

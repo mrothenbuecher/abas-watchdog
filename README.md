@@ -30,8 +30,10 @@ Die Einstellung erfolgt mittels der `settings.json` im Ordner watchdog.
 | kill_time_min         |   int  | Anzahl der Minuten (inaktiv) nach dem abas geschlossen wird                                          |                        0                       |
 | singleton             |  bool  | Es darf nur eine Instanz von abas geöffnet sein andere werden geschlossen                            |                      false                     |
 | ignore_windows_titles |  Array | Titel, Teilzeicheketten der Fenster die bei der Inaktivitätsbetrachtung ignoriert werden             | ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"] |
-| refresh_interval_ms   |   int  | Zeit in Millisekunden bis zum nächsten Prüfen der Fensterstati                                       |                    1000                        |
+| refresh_interval_ms   |   int  | Zeit in Millisekunden bis zum nächsten Prüfen der Fensterstati                                       |                    500                         |
 | lang                  | String | Kürzel für die Sprache                                                                               |                     de                         |
+| allow_devtools        |  bool  | vom Traymenü aus sollen die Entwicklungswerkzeuge anzeigbar sein?                                    |                     false                      |
+| allow_quit            |  bool  | vom Traymenü aus das Programm beenden                                                                |                     true                       |
 
 ## Installation
 
