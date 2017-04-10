@@ -72,7 +72,7 @@ if (contents) {
 
                 var makeError = function(){
                   if(!errorwindow){
-                    errorwindow = new BrowserWindow({width: 300, height: 150,icon: __dirname + '/images/abas.ico'});
+                    errorwindow = new BrowserWindow({width: 500, height: 300,icon: __dirname + '/images/abas.ico'});
                     errorwindow.setMenu(null);
 
                     errorwindow.loadURL(url.format({

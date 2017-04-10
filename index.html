@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="node_modules/material-design-lite/dist/material.blue_grey-red.min.css">
     <link rel="stylesheet" href="node_modules/toastr/build/toastr.css">
-    <link rel="stylesheet" href="assets/css/fakeLoader.css">
     <link rel="stylesheet" href="assets/css/context.standalone.css">
     <link rel="stylesheet" href="assets/css/styles.css">
     <!-- um jquery zum laufen zubringen -->
@@ -32,27 +31,9 @@
     <script>
         if (window.module) module = window.module;
     </script>
-
-    <script src="assets/js/fakeLoader.js"></script>
 </head>
 
 <body>
-    <!-- Ladebildschirm beim starten -->
-    <div id="fakeLoader"></div>
-    <script type="text/javascript">
-        $("#fakeLoader").fakeLoader({
-            timeToHide: 2500,
-            zIndex: "999",
-            spinner: "spinner1",
-            bgColor: "#607D8B"
-        });
-    </script>
-    <!-- indicator für ajax anfragen -->
-    <div id="ajax-indicator" class="spinner1" style="display:none;">
-        <div class="red double-bounce1"></div>
-        <div class="red double-bounce2"></div>
-    </div>
-
     <!-- eigentlischer Content -->
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <header class="mdl-layout__header">
