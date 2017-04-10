@@ -5,6 +5,6 @@
     "kill_time_min": 0,
     "singleton": false,
     "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
-    "refresh_interval_ms": 1000,
+    "refresh_interval_ms": 500,
     "lang":"de"
 }
