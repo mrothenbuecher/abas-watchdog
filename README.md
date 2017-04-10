@@ -40,3 +40,7 @@ Die Einstellung erfolgt mittels der `settings.json` im Ordner watchdog.
 3. entsprechendes Kommando ("%watchdog/abas-watchdog.exe") in den Autostart der Kommandoübersicht hinterlegen
 
 Mit der nächsten Anmeldung sollte abas-watchdog mit gestartet sein (trayicon).
+
+## Credit
+
+[icon](https://github.com/mrothenbuecher/abas-watchdog/blob/master/images/abas.png) by [abas](http://abas-erp.com/)
