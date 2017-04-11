@@ -1,4 +1,3 @@
-
 const url = require('url')
 const path = require('path')
 
@@ -70,41 +69,56 @@ if (contents) {
             // Methode welche die ganze Arbeit übernimmt
             var dog = function() {
 
-                var makeError = function(){
-                  if(!errorwindow){
-                    errorwindow = new BrowserWindow({width: 500, height: 300,icon: __dirname + '/images/abas.ico'});
-                    errorwindow.setMenu(null);
+                var makeError = function() {
+                    if (!errorwindow) {
+                        errorwindow = new BrowserWindow({
+                            width: 500,
+                            height: 300,
+                            icon: __dirname + '/images/abas.ico'
+                        });
+                        errorwindow.setMenu(null);
 
-                    errorwindow.loadURL(url.format({
-                        pathname: path.join(__dirname, 'error.html'),
-                        protocol: 'file:',
-                        slashes: true
-                    }));
+                        errorwindow.loadURL(url.format({
+                            pathname: path.join(__dirname, 'error.html'),
+                            protocol: 'file:',
+                            slashes: true
+                        }));
 
-                    //errorwindow.openDevTools();
+                        //errorwindow.openDevTools();
 
-                    errorwindow.on('close', function(e) {
-                          e.preventDefault();
-                          errorwindow = null;
-                          //TODO Log
-                    });
-                  }
+                        errorwindow.on('close', function(e) {
+                            e.preventDefault();
+                            errorwindow = null;
+                            //TODO Log
+                        });
+                    }
                 };
 
-                var ignoreWindow = function(val) {
+                var ignore = function(val, array) {
                     var ignore = false;
                     // prüfen ob der Fenstertitel ignoriert werden soll
-                    $.each(settings.ignore_windows_titles, function(i, title) {
+                    $.each(array, function(i, title) {
                         ignore = ignore || val.windowtitle.indexOf(title) !== -1;
                     });
                     return ignore;
                 };
 
+                var ignoreWindow = function(val) {
+                    return ignore(val, settings.ignore_windows_titles);
+                };
+
+                var ignoreAllWindow = function(val) {
+                    return ignore(val, settings.ignore_all_windows_titles);
+                };
+
                 // abas window watcher exe ausführen
                 exec(settings.dir + "abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
                     if (!err) {
+                        // Daten aus der abas-window-watcher.exe
+                        // Liste der offenen Fenster
                         var data = JSON.parse(text);
                         $('#windows').html("");
+                        // keine Fenster geöffnet
                         if (data.length == 0) {
                             //aktuell kein abas offen
                             var row = "<tr>";
@@ -113,6 +127,7 @@ if (contents) {
                             $('#windows').append(row);
                             $('#activity-label').text("");
                             $('#closed-label').text("");
+
                         } else {
 
                             var idleTime = 10000000000000000;
@@ -157,6 +172,9 @@ if (contents) {
                                 }
                             });
 
+                            var ignoreAll = false;
+
+                            // offene Fenster prüfen
                             $.each(data, function(i, val) {
 
                                 var found = false;
@@ -166,6 +184,11 @@ if (contents) {
                                         // nichts mit dem Fenster passiert
                                         val = foo;
                                         found = true;
+                                        // Fenster soll ignoriert werden siehe ignore_all_windows_titles...
+                                        if(ignoreAllWindow(val)){
+                                          val.time = (new Date()).getTime();
+                                          windows[j] = val;
+                                        }
                                     }
                                     if (foo.id == val.id && foo.windowtitle != val.windowtitle) {
                                         // titel vom Fenster ist anders
@@ -184,6 +207,12 @@ if (contents) {
                                 }
 
                                 var currentTime = ((new Date()).getTime() - val.time);
+
+                                // prüfen ob durch dieses Fenster
+                                // alle anderen Fenster auch ignoriert werden müssen
+                                if(ignoreAllWindow(val)){
+                                  ignoreAll = true;
+                                }
 
                                 // wenn es nicht ignoriert werden kann muss geprüft werden
                                 // wie lange das Fenster schon aktiv ist
@@ -207,14 +236,14 @@ if (contents) {
 
                             });
 
-                            if (lastClosed != 10000000000000000) {
+                            if (lastClosed != 10000000000000000 && !ignoreAll) {
                                 $('#closed-label').text($.i18n("last_closed") + msToTime(lastClosed));
 
                             } else {
                                 $('#closed-label').text("");
                             }
 
-                            if (idleTime != 10000000000000000) {
+                            if (idleTime != 10000000000000000 && !ignoreAll) {
                                 $('#activity-label').text($.i18n("last_activity") + msToTime(idleTime));
 
                                 // Umrechung in Minuten

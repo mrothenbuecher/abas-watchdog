@@ -22,18 +22,19 @@ Dadurch ist es möglich zu erkennen
 
 Die Einstellung erfolgt mittels der `settings.json` im Ordner watchdog.
 
-| Name                  |   Typ  | Beschreibung                                                                                         | Standardwert                                   |
-|-----------------------|:------:|------------------------------------------------------------------------------------------------------|------------------------------------------------|
-| warning_time_min      |   int  | Anzahl der Minuten (inaktiv) bis zur Warnung                                                         |                       10                       |
-| error_time_min        |   int  | Anzahl der Minuten (inaktiv) bis zur Fehlermeldung                                                   |                       15                       |
-| close_time_min        |   int  | Anzahl der Minuten nach dem schließen eines Fensters nach dem wieder Warnungen,Fehler usw.           |                        1                       |
-| kill_time_min         |   int  | Anzahl der Minuten (inaktiv) nach dem abas geschlossen wird                                          |                        0                       |
-| singleton             |  bool  | Es darf nur eine Instanz von abas geöffnet sein andere werden geschlossen                            |                      false                     |
-| ignore_windows_titles |  Array | Titel, Teilzeicheketten der Fenster die bei der Inaktivitätsbetrachtung ignoriert werden             | ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"] |
-| refresh_interval_ms   |   int  | Zeit in Millisekunden bis zum nächsten Prüfen der Fensterstati                                       |                    500                         |
-| lang                  | String | Kürzel für die Sprache                                                                               |                     de                         |
-| allow_devtools        |  bool  | vom Traymenü aus sollen die Entwicklungswerkzeuge anzeigbar sein?                                    |                     false                      |
-| allow_quit            |  bool  | vom Traymenü aus das Programm beenden                                                                |                     true                       |
+| Name                      |   Typ  | Beschreibung                                                                                                | Standardwert                               |
+|---------------------------|:------:|-------------------------------------------------------------------------------------------------------------|:------------------------------------------:|
+| warning_time_min          |   int  | Anzahl der Minuten (inaktiv) bis zur Warnung                                                                |                       10                   |
+| error_time_min            |   int  | Anzahl der Minuten (inaktiv) bis zur Fehlermeldung                                                          |                       15                   |
+| close_time_min            |   int  | Anzahl der Minuten nach dem schließen eines Fensters nach dem wieder Warnungen,Fehler usw. angezeigt werden |                        1                   |
+| kill_time_min             |   int  | Anzahl der Minuten (inaktiv) nach dem abas geschlossen wird                                                 |                        0                   |
+| singleton                 |  bool  | Es darf nur eine Instanz von abas geöffnet sein andere werden geschlossen                                   |                      false                 |
+| ignore_windows_titles     |  Array | Titel, Teilzeichenketten der Fenster die bei der Inaktivitätsbetrachtung ignoriert werden                   | ["abas ERP Kommandoübersicht", "abas ERP"] |
+| ignore_all_windows_titles |  Array | Titel, Teilzeichenketten der Fenster bei deren Vorkommen alle Fenster ignoriert werden                      |                ["bitte warten"]            |
+| refresh_interval_ms       |   int  | Zeit in Millisekunden bis zum nächsten Prüfen der Fensterstati                                              |                    500                     |
+| lang                      | String | Kürzel für die Sprache                                                                                      |                     de                     |
+| allow_devtools            |  bool  | vom Traymenü aus sollen die Entwicklungswerkzeuge anzeigbar sein?                                           |                     false                  |
+| allow_quit                |  bool  | vom Traymenü aus das Programm beenden                                                                       |                     true                   |
 
 ## Installation
 

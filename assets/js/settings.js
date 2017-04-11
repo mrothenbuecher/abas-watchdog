@@ -4,7 +4,8 @@ var settings = {
     "close_time_min": 1,
     "kill_time_min": 0,
     "singleton": false,
-    "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
+    "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP"],
+    "ignore_all_windows_titles": ["bitte warten"],
     "refresh_interval_ms": 500,
     "lang": "de",
     "elasticsearch": null,
@@ -32,6 +33,4 @@ if(contents){
   var jsonContent = JSON.parse(contents);
   // Einstellung aus Datei lesen
   settings = extend(settings, jsonContent);
-
-  console.log("file found");
 }

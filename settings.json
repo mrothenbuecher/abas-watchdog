@@ -6,5 +6,6 @@
     "singleton": false,
     "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
     "refresh_interval_ms": 500,
+    "allow_devtools": true,
     "lang":"de"
 }
