@@ -268,8 +268,10 @@ if (contents) {
                                 }
 
                                 // Programm beenden
-                                if (settings.kill_time_min > 0 && idleTime > settings.kill_time_min) {
-                                    exec(settings.dir + "abas-window-watcher.exe kill", function(err, text) {});
+                                if (settings.kill_time_min > 0 && idleTime >= settings.kill_time_min) {
+                                    exec(settings.dir + "abas-window-watcher.exe",["kill"], function(err, text) {
+										console.log("kill Error:",err,text);
+									});
                                 }
                             } else {
                                 $('#activity-label').text("");
