@@ -22,8 +22,7 @@
       "!**/*.yml",
       "!**/*.md"
     ],
-    "extraFiles": [
-      {
+    "extraFiles": [{
         "from": "lang",
         "to": "lang",
         "filter": [
@@ -31,8 +30,8 @@
         ]
       },
       "abas-window-watcher.exe",
-	  "Newtonsoft.Json.dll",
-	  "Newtonsoft.Json.xml",
+      "Newtonsoft.Json.dll",
+      "Newtonsoft.Json.xml",
       "settings.json"
     ],
     "mac": {

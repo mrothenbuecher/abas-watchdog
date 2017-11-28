@@ -1,114 +1,120 @@
 <!doctype html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="abas Watchdog">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>abas-watchdog</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="node_modules/material-design-lite/dist/material.blue_grey-red.min.css">
-    <link rel="stylesheet" href="node_modules/toastr/build/toastr.css">
-    <link rel="stylesheet" href="assets/css/context.standalone.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <!-- um jquery zum laufen zubringen -->
-    <script>
-        if (typeof module === 'object') {
-            window.module = module;
-            module = undefined;
-        }
-    </script>
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="assets/js/jquery.i18n.js"></script>
-    <script src="assets/js/jquery.i18n.messagestore.js"></script>
-    <script src="assets/js/jquery.i18n.fallbacks.js"></script>
-    <script src="assets/js/jquery.i18n.language.js"></script>
-    <script src="assets/js/jquery.i18n.parser.js"></script>
-    <script src="assets/js/jquery.i18n.emitter.js"></script>
-    <script src="assets/js/jquery.i18n.emitter.bidi.js"></script>
-    <script>
-        if (window.module) module = window.module;
-    </script>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="abas Watchdog">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>abas-watchdog</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="node_modules/material-design-lite/dist/material.blue_grey-red.min.css">
+  <link rel="stylesheet" href="node_modules/toastr/build/toastr.css">
+  <link rel="stylesheet" href="assets/css/context.standalone.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <!-- um jquery zum laufen zubringen -->
+  <script>
+    if (typeof module === 'object') {
+      window.module = module;
+      module = undefined;
+    }
+  </script>
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="assets/js/jquery.i18n.js"></script>
+  <script src="assets/js/jquery.i18n.messagestore.js"></script>
+  <script src="assets/js/jquery.i18n.fallbacks.js"></script>
+  <script src="assets/js/jquery.i18n.language.js"></script>
+  <script src="assets/js/jquery.i18n.parser.js"></script>
+  <script src="assets/js/jquery.i18n.emitter.js"></script>
+  <script src="assets/js/jquery.i18n.emitter.bidi.js"></script>
+  <script>
+    if (window.module) module = window.module;
+  </script>
 </head>
 
 <body>
-    <!-- eigentlischer Content -->
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-        <header class="mdl-layout__header">
-            <div class="mdl-layout__header-row" style="padding: 0px 15px 0px 15px;">
-                <!-- refresh button -->
-                <div class="mdl-layout-spacer"></div>
-                <button id="lang" class="mdl-button mdl-js-button" style="color:white;">
+  <!-- eigentlischer Content -->
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row" style="padding: 0px 15px 0px 15px;">
+        <!-- refresh button -->
+        <div class="mdl-layout-spacer"></div>
+        <button id="lang" class="mdl-button mdl-js-button" style="color:white;">
                     <span data-i18n="language">Sprache</span>
                     <i class="material-icons">more_vert</i>
                 </button>
 
-                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" id="lang-menu" for="lang">
-                    <!-- sprache menü einträge gehen hier hin -->
-                </ul>
+        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" id="lang-menu" for="lang">
+          <!-- sprache menü einträge gehen hier hin -->
+        </ul>
 
-            </div>
-        </header>
-        <main class="mdl-layout__content">
-            <div class="container-fluid">
-                <div class="mdl-grid">
-                    <div class="mdl-cell mdl-cell--12-col">
-                        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th data-i18n="window">Fenster</th>
-                                    <th data-i18n="open_since">offen seit</th>
-                                </tr>
-                            </thead>
-                            <tbody id="windows">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mdl-cell mdl-cell--12-col">
-                      <label id="activity-label"></label>
-                    </div>
-                    <div class="mdl-cell mdl-cell--12-col">
-                      <label id="closed-label"></label>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-    <!-- fremd -->
-    <script src="node_modules/material-design-lite/material.min.js"></script>
-    <script src="node_modules/toastr/build/toastr.min.js"></script>
-    <script src="assets/js/bootstrap3-typeahead.min.js"></script>
+      </div>
+    </header>
+    <main class="mdl-layout__content">
+      <div class="container-fluid">
+        <div class="mdl-grid">
+          <div class="mdl-cell mdl-cell--12-col">
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th data-i18n="window">Fenster</th>
+                  <th data-i18n="open_since">offen seit</th>
+                </tr>
+              </thead>
+              <tbody id="windows">
+              </tbody>
+            </table>
+          </div>
+          <div class="mdl-cell mdl-cell--12-col">
+            <label id="activity-label"></label>
+          </div>
+          <div class="mdl-cell mdl-cell--12-col">
+            <label id="closed-label"></label>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <!-- fremd -->
+  <script src="node_modules/material-design-lite/material.min.js"></script>
+  <script src="node_modules/toastr/build/toastr.min.js"></script>
+  <script src="assets/js/bootstrap3-typeahead.min.js"></script>
 
-    <!-- settings -->
-    <script type="text/javascript">
-
+  <!-- settings -->
+  <script type="text/javascript">
     function loadScript(src) {
-      return new Promise(function (resolve, reject) {
-          var s;
-          s = document.createElement('script');
-          s.src = src;
-          s.onload = resolve;
-          s.onerror = reject;
-          document.head.appendChild(s);
+      return new Promise(function(resolve, reject) {
+        var s;
+        s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
       });
     }
 
-      console.log("__dirname:"+__dirname);
-      const path = require("path");
-      if(__dirname.indexOf("watchdog") !== -1){
-        loadScript('assets/js/settings.js');
-        loadScript('assets/js/watchdog.js');
-        loadScript('assets/js/lang.js');
-      }else{
-        loadScript('watchdog/assets/js/settings.js');
-        loadScript('watchdog/assets/js/watchdog.js');
-        loadScript('watchdog/assets/js/lang.js');
-      }
-    </script>
+    console.log("__dirname:" , __dirname);
+    console.log("process.cwd:" , process.cwd());
 
-    <!-- settings -
+    console.log("indexof watchdog:",process.cwd().indexOf("watchdog"));
+
+    const path = require("path");
+    if (process.cwd().indexOf("watchdog") !== -1) {
+      console.log("loading settings from :"+process.cwd()+"/assets/js/settings.js");
+      loadScript('assets/js/settings.js');
+      loadScript('assets/js/watchdog.js');
+      loadScript('assets/js/lang.js');
+    } else {
+      console.log("loading settings from :"+process.cwd()+"/watchdog/assets/js/settings.js");
+      loadScript('watchdog/assets/js/settings.js');
+      loadScript('watchdog/assets/js/watchdog.js');
+      loadScript('watchdog/assets/js/lang.js');
+    }
+  </script>
+
+  <!-- settings -
     <script src="assets/js/settings.js"></script>
 
     <!-- watchdog
@@ -118,4 +124,5 @@
     <script src="assets/js/lang.js"></script>
   -->
 </body>
+
 </html>

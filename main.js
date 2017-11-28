@@ -6,7 +6,7 @@ eval(fs.readFileSync('assets/js/settings.js') + '');
 // dafür sorgen das die devtools angezeigt werden
 
 require('electron-debug')({
-    showDevTools: false
+  showDevTools: false
 });
 
 
@@ -24,109 +24,109 @@ let tray
 
 function createWindow() {
 
-    tray = new Tray(__dirname + '/images/abas.ico');
-    tray.setToolTip('abas-watchdog');
+  tray = new Tray(__dirname + '/images/abas.ico');
+  tray.setToolTip('abas-watchdog');
 
 
-    mainWindow = new BrowserWindow({
-        icon: __dirname + '/images/abas.ico'
-    });
-    mainWindow.setMenu(null);
-    //mainWindow.openDevTools();
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
+  mainWindow = new BrowserWindow({
+    icon: __dirname + '/images/abas.ico'
+  });
+  mainWindow.setMenu(null);
+  //mainWindow.openDevTools();
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
 
-    var force_quit = false;
+  var force_quit = false;
 
-    var menu = [];
+  var menu = [];
 
+  menu.push({
+    label: 'show',
+    type: 'normal',
+    click: function() {
+      mainWindow.show();
+    }
+  });
+
+  if (settings.allow_devtools) {
     menu.push({
-        label: 'show',
-        type: 'normal',
-        click: function() {
-            mainWindow.show();
-        }
+      label: 'devtools',
+      type: 'normal',
+      click: function() {
+        mainWindow.openDevTools();
+      }
     });
+  }
 
-    if (settings.allow_devtools) {
-        menu.push({
-            label: 'devtools',
-            type: 'normal',
-            click: function() {
-                mainWindow.openDevTools();
-            }
-        });
+  if (settings.allow_quit) {
+    menu.push({
+      type: 'separator'
+    });
+    menu.push({
+      label: 'quit',
+      type: 'normal',
+      click: function() {
+        force_quit = true;
+        mainWindow.close();
+      }
+    });
+  }
+
+  const contextMenu = Menu.buildFromTemplate(menu);
+
+  tray.setContextMenu(contextMenu);
+
+  tray.on('click', () => {
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+  });
+
+  mainWindow.on('show', () => {
+    tray.setHighlightMode('always');
+  });
+
+  mainWindow.on('hide', () => {
+    tray.setHighlightMode('never');
+  });
+
+  // Hauptfenster wird nicht geschlossen nur versteckt
+  mainWindow.on('close', function(e) {
+    if (!force_quit) {
+      e.preventDefault();
+      mainWindow.hide();
     }
+  });
 
-    if (settings.allow_quit) {
-        menu.push({
-            type: 'separator'
-        });
-        menu.push({
-            label: 'quit',
-            type: 'normal',
-            click: function() {
-                force_quit = true;
-                mainWindow.close();
-            }
-        });
-    }
-
-    const contextMenu = Menu.buildFromTemplate(menu);
-
-    tray.setContextMenu(contextMenu);
-
-    tray.on('click', () => {
-        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
-    });
-
-    mainWindow.on('show', () => {
-        tray.setHighlightMode('always');
-    });
-
-    mainWindow.on('hide', () => {
-        tray.setHighlightMode('never');
-    });
-
-    // Hauptfenster wird nicht geschlossen nur versteckt
-    mainWindow.on('close', function(e) {
-        if (!force_quit) {
-            e.preventDefault();
-            mainWindow.hide();
-        }
-    });
-
-    mainWindow.hide();
+  mainWindow.hide();
 }
 
 
 var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow) {
-        if (!mainWindow.isVisible()) mainWindow.show();
-        if (mainWindow.isMinimized()) mainWindow.restore();
-        mainWindow.focus();
-    }
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (!mainWindow.isVisible()) mainWindow.show();
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
 });
 
 if (shouldQuit) {
-    app.quit();
-    return;
+  app.quit();
+  return;
 }
 
 app.on('ready', createWindow)
 
 app.on('window-all-closed', function() {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
 })
 
 app.on('activate', function() {
-    if (mainWindow === null) {
-        createWindow()
-    }
+  if (mainWindow === null) {
+    createWindow()
+  }
 })

@@ -1,12 +1,12 @@
 {
-    "warning_time_min": 10,
-    "error_time_min": 15,
-    "close_time_min": 1,
-    "kill_time_min": 0,
-    "singleton": false,
-    "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
-    "dont_kill": ["abas ERP Kommandoübersicht"],
-    "refresh_interval_ms": 500,
-    "allow_devtools": true,
-    "lang":"de"
+  "warning_time_min": 10,
+  "error_time_min": 15,
+  "close_time_min": 1,
+  "kill_time_min": 0,
+  "singleton": false,
+  "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
+  "dont_kill": ["abas ERP Kommandoübersicht"],
+  "refresh_interval_ms": 500,
+  "allow_devtools": true,
+  "lang": "de"
 }
