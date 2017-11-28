@@ -82,12 +82,40 @@
     <script src="assets/js/bootstrap3-typeahead.min.js"></script>
 
     <!-- settings -->
+    <script type="text/javascript">
+
+    function loadScript(src) {
+      return new Promise(function (resolve, reject) {
+          var s;
+          s = document.createElement('script');
+          s.src = src;
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+      });
+    }
+
+      console.log("__dirname:"+__dirname);
+      const path = require("path");
+      if(__dirname.indexOf("watchdog") !== -1){
+        loadScript('assets/js/settings.js');
+        loadScript('assets/js/watchdog.js');
+        loadScript('assets/js/lang.js');
+      }else{
+        loadScript('watchdog/assets/js/settings.js');
+        loadScript('watchdog/assets/js/watchdog.js');
+        loadScript('watchdog/assets/js/lang.js');
+      }
+    </script>
+
+    <!-- settings -
     <script src="assets/js/settings.js"></script>
 
-    <!-- watchdog -->
+    <!-- watchdog
     <script src="assets/js/watchdog.js"></script>
 
-    <!-- lang -->
+    <!-- lang
     <script src="assets/js/lang.js"></script>
+  -->
 </body>
 </html>
