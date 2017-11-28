@@ -33,12 +33,13 @@ Die Einstellung erfolgt mittels der `settings.json` im Ordner watchdog.
 | ignore_all_windows_titles |  Array | Titel, Teilzeichenketten der Fenster bei deren Vorkommen alle Fenster ignoriert werden                      |                ["bitte warten"]            |
 | refresh_interval_ms       |   int  | Zeit in Millisekunden bis zum nächsten Prüfen der Fensterstati                                              |                    500                     |
 | lang                      | String | Kürzel für die Sprache                                                                                      |                     de                     |
-| allow_devtools            |  bool  | vom Traymenü aus sollen die Entwicklungswerkzeuge anzeigbar sein?                                           |                     false                  |
+| allow_devtools            |  bool  | vom Traymenü aus sollen die Entwicklungswerkzeuge anzeigbar sein?                                           |                     true                   |
 | allow_quit                |  bool  | vom Traymenü aus das Programm beenden                                                                       |                     true                   |
+| dont_kill                 |  Array | Titel, Teilzeichenketten der Fenster die nicht geschlossen werden                                           | ["abas ERP Kommandoübersicht"]             |
 
 ## Installation
 
-1. den release herunterladen
+1. den [release](https://github.com/mrothenbuecher/abas-watchdog/releases) herunterladen
 2. in das Verzeichnis der wineks.exe entpacken der "watchdog" Ordner liegt im gleichen Verzeichniss wie die wineks.exe
 3. entsprechendes Kommando ("%watchdog/abas-watchdog.exe") in den Autostart der Kommandoübersicht hinterlegen
 

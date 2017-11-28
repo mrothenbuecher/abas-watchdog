@@ -31,6 +31,8 @@
         ]
       },
       "abas-window-watcher.exe",
+	  "Newtonsoft.Json.dll",
+	  "Newtonsoft.Json.xml",
       "settings.json"
     ],
     "mac": {

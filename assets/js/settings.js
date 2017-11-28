@@ -5,13 +5,14 @@ var settings = {
     "kill_time_min": 0,
     "singleton": false,
     "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP"],
+    "dont_kill": ["abas ERP Kommandoübersicht"],
     "ignore_all_windows_titles": ["bitte warten"],
     "refresh_interval_ms": 500,
     "lang": "de",
     "elasticsearch": null,
     "dir": "",
     "allow_quit": true,
-    "allow_devtools": false
+    "allow_devtools": true
 };
 
 function extend(){
