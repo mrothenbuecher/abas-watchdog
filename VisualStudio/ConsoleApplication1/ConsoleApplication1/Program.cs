@@ -87,7 +87,10 @@ namespace AbasWindowWatcher
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Process[] processes = Process.GetProcessesByName("wineks");
 
-            if (processes.Length == 0) { return; }
+            if (processes.Length == 0) {
+                Console.WriteLine("[]");
+                return;
+            }
 
             if (args.Length == 1 && args[0].ToLower() == "kill")
             {
@@ -132,16 +135,22 @@ namespace AbasWindowWatcher
             }
             else
             {
+                // singleton?
                 bool singleton = (args.Length == 1 && args[0].ToLower() == "singleton");
                 
                 bool first = true;
 
                 foreach (Process process in processes)
                 {
+                    // nicht der erste Prozess
+                    // und singleton
                     if(!first && singleton)
                     {
+                        // prozess entfernen
                         process.Kill();
                     }
+                    // nur der erste Prozess wird aufgelistet
+                    // TODO
                     if (first)
                     {
                         IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
@@ -157,7 +166,6 @@ namespace AbasWindowWatcher
                     }
                 }
             }
-            Console.ReadLine();
         }
     }
 }
