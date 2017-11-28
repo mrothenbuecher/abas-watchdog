@@ -105,8 +105,6 @@ namespace AbasWindowWatcher
             {
                 // alle Prozesse außer ... töten
                 // abas-window-watcher.exe kill ["abas Kommandoübersicht","Artikel",...]
-                Console.WriteLine("kill not: " + args[1]);
-
                 List<string> names = JsonConvert.DeserializeObject <List<string>>(args[1]);
 
                 foreach (Process process in processes)
