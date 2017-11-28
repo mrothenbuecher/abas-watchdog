@@ -15,7 +15,6 @@
     </StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <StartArguments>
-    </StartArguments>
+    <StartArguments>kill "[\"abas ERP Kommandoübersicht\"]"</StartArguments>
   </PropertyGroup>
 </Project>

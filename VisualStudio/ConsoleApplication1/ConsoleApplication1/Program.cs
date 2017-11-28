@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using System.Management;
 
 namespace AbasWindowWatcher
 {
@@ -37,6 +39,16 @@ namespace AbasWindowWatcher
 
         [DllImport("USER32.DLL")]
         private static extern IntPtr GetShellWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+
+        private const UInt32 WM_CLOSE = 0x0010;
+
+        static void CloseWindow(IntPtr hwnd)
+        {
+            SendMessage(hwnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
 
         static IDictionary<IntPtr, Window> GetOpenWindowsFromPID(int processID)
         {
@@ -75,12 +87,48 @@ namespace AbasWindowWatcher
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Process[] processes = Process.GetProcessesByName("wineks");
 
+            if (processes.Length == 0) { return; }
+
             if (args.Length == 1 && args[0].ToLower() == "kill")
             {
+                // alle Prozesse töten
+                // abas-window-watcher.exe kill
                 foreach (Process process in processes)
                 {
                     process.Kill();
                 }
+            }
+            if (args.Length == 2 && args[0].ToLower() == "kill")
+            {
+                // alle Prozesse außer ... töten
+                // abas-window-watcher.exe kill ["abas Kommandoübersicht","Artikel",...]
+                Console.WriteLine("kill not: " + args[1]);
+
+                List<string> names = JsonConvert.DeserializeObject <List<string>>(args[1]);
+
+                foreach (Process process in processes)
+                {
+                    IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
+                    foreach (var kvp in windows)
+                    {
+                        bool kill = true;
+
+                        foreach (string name in names)
+                        {
+                            if (kvp.Value.Title.Contains(name))
+                            {
+                                kill = false;
+                                break;
+                            }
+                        }
+
+                        if (kill)
+                        {
+                            CloseWindow(kvp.Key);
+                        }
+                    }
+                }
+
             }
             else
             {
@@ -88,7 +136,6 @@ namespace AbasWindowWatcher
                 
                 bool first = true;
 
-                Console.Write("[");
                 foreach (Process process in processes)
                 {
                     if(!first && singleton)
@@ -98,31 +145,19 @@ namespace AbasWindowWatcher
                     if (first)
                     {
                         IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
-
-                        bool foo = true;
-                        foreach (KeyValuePair<IntPtr, Window> kvp in windows)
-                        {
-                            String title = kvp.Value.Title;
-
-                            title = Regex.Replace(title, "(\")", "\\\"", RegexOptions.IgnoreCase);
-
-                            title = "{\"windowtitle\":\"" + title + "\", \"id\":" + kvp.Value.ProcessId + "}";
-
-                            if (foo)
+                        var x = windows.Select(kvp => new
                             {
-                                Console.Write("{0}", title);
-                                foo = false;
-                            }
-                            else
-                            {
-                                Console.Write(",{0}", title);
-                            }
-                        }
+                                windowtitle = kvp.Value.Title,
+                                id = kvp.Value.ProcessId
+                            });
+
+                        Console.WriteLine(JsonConvert.SerializeObject(x));
+
                         first = false;
                     }
                 }
-                Console.Write("]");
             }
+            Console.ReadLine();
         }
     }
 }
