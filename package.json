@@ -29,6 +29,10 @@
           "*.json"
         ]
       },
+      {
+        "from": "assets",
+        "to": "assets"
+      },
       "abas-window-watcher.exe",
       "Newtonsoft.Json.dll",
       "Newtonsoft.Json.xml",

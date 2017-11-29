@@ -95,13 +95,16 @@
       });
     }
 
+    const path = require("path");
+
+    var fs = require('fs');
+
     console.log("__dirname:" , __dirname);
     console.log("process.cwd:" , process.cwd());
 
-    console.log("indexof watchdog:",process.cwd().indexOf("watchdog"));
+    console.log("watchdog dir exists:", fs.existsSync("watchdog"));
 
-    const path = require("path");
-    if (process.cwd().indexOf("watchdog") !== -1) {
+    if (fs.existsSync("watchdog")) {
       console.log("loading settings from :"+process.cwd()+"/assets/js/settings.js");
       loadScript('assets/js/settings.js');
       loadScript('assets/js/watchdog.js');
@@ -114,7 +117,8 @@
     }
   </script>
 
-  <!-- settings -
+
+  <!-- settings
     <script src="assets/js/settings.js"></script>
 
     <!-- watchdog

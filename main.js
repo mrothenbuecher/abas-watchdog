@@ -1,8 +1,12 @@
 var fs = require('fs');
 const electron = require('electron')
 
-eval(fs.readFileSync('assets/js/settings.js') + '');
 
+if (fs.existsSync("watchdog")) {
+  eval(fs.readFileSync('watchdog/assets/js/settings.js') + '');
+}else{
+  eval(fs.readFileSync('assets/js/settings.js') + '');
+}
 // dafür sorgen das die devtools angezeigt werden
 
 require('electron-debug')({
