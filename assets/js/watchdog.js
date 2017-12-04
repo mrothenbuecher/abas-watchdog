@@ -251,7 +251,7 @@ if (contents) {
                 lastClosed = lastClosed / 1000 / 60.0;
 
                 // Warnung ausgeben
-                if (idleTime > settings.warning_time_min && lastClosed > settings.close_time_min) {
+                if (settings.warning_time_min > 0 && idleTime > settings.warning_time_min && lastClosed > settings.close_time_min) {
                   if (!notif) {
                     notif = new window.Notification($.i18n("dialog_title"), {
                       body: $.i18n("dialog_warning"),
@@ -263,7 +263,7 @@ if (contents) {
                   }
                 }
                 // Fehler ausgeben
-                if (idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
+                if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                   makeError();
                 }
 
