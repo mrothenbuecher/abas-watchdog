@@ -33,7 +33,8 @@ function createWindow() {
 
 
   mainWindow = new BrowserWindow({
-    icon: __dirname + '/images/abas.ico'
+    icon: __dirname + '/images/abas.ico',
+    show: false
   });
   mainWindow.setMenu(null);
   //mainWindow.openDevTools();
