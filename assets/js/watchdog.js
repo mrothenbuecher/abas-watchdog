@@ -128,7 +128,7 @@ if (contents) {
 
               var data = proc.Windows;
 
-              console.log("data", data);
+              //console.log("data", data);
 
               // keine Fenster geöffnet
               if (data.length == 0) {

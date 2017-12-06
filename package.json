@@ -1,7 +1,7 @@
 {
   "name": "abas-watchdog",
   "productName": "abas-watchdog",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "a License Watchdog for abas-ERP",
   "homepage": "https://github.com/mrothenbuecher/abas-watchdog",
   "main": "main.js",
