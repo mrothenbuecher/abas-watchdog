@@ -8,6 +8,7 @@
     },
     "language":"lang",
     "window":"window",
+    "client":"clients",
     "open_since":"open since",
     "last_activity":"your last activity: ",
     "dialog_title":"please release abas license",

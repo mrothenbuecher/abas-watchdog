@@ -8,6 +8,7 @@
     },
     "language":"Sprache",
     "window":"Fenster",
+    "client":"Mandant",
     "open_since":"offen seit",
     "last_activity":"Ihre letzte Aktivität war vor ",
     "dialog_title":"abas Lizenz freigeben",

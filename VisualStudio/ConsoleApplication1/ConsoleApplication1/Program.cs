@@ -15,9 +15,17 @@ namespace AbasWindowWatcher
     class Program
     {
 
-        class Window{
+        class Window
+        {
             public string Title { get; set; }
             public long ProcessId { get; set; }
+        }
+
+        class Proc
+        {
+            public string File { get; set; }
+            public int Id { get; set; }
+            public List<Window> Windows { get; set; }
         }
 
         private delegate bool EnumWindowsProc(IntPtr hWnd, int lParam);
@@ -87,12 +95,14 @@ namespace AbasWindowWatcher
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             Process[] processes = Process.GetProcessesByName("wineks");
 
-            if (processes.Length == 0) {
-                Console.WriteLine("[]");
+            if (processes.Length == 0)
+            {
+                Console.WriteLine("[{\"Windows\":[]}]");
+               // Console.ReadLine();
                 return;
             }
 
-            if (args.Length == 1 && args[0].ToLower() == "kill")
+            if (args.Length == 1 && args[0].ToLower().Equals("kill"))
             {
                 // alle Prozesse töten
                 // abas-window-watcher.exe kill
@@ -100,12 +110,13 @@ namespace AbasWindowWatcher
                 {
                     process.Kill();
                 }
+                return;
             }
-            if (args.Length == 2 && args[0].ToLower() == "kill")
+            if (args.Length == 2 && args[0].ToLower().Equals("kill"))
             {
                 // alle Prozesse außer ... töten
                 // abas-window-watcher.exe kill ["abas Kommandoübersicht","Artikel",...]
-                List<string> names = JsonConvert.DeserializeObject <List<string>>(args[1]);
+                List<string> names = JsonConvert.DeserializeObject<List<string>>(args[1]);
 
                 foreach (Process process in processes)
                 {
@@ -129,41 +140,52 @@ namespace AbasWindowWatcher
                         }
                     }
                 }
-
+                return;
             }
-            else
+
+            // singleton?
+            bool singleton = (args.Length == 1 && args[0].ToLower() == "singleton");
+
+            bool first = true;
+
+            // Liste aller Prozesse und deren Fenster
+            List<Proc> foo = new List<Proc>();
+
+            foreach (Process process in processes)
             {
-                // singleton?
-                bool singleton = (args.Length == 1 && args[0].ToLower() == "singleton");
-                
-                bool first = true;
-
-                foreach (Process process in processes)
+                // nicht der erste Prozess
+                // und singleton
+                if (!first && singleton)
                 {
-                    // nicht der erste Prozess
-                    // und singleton
-                    if(!first && singleton)
-                    {
-                        // prozess entfernen
-                        process.Kill();
-                    }
-                    // nur der erste Prozess wird aufgelistet
-                    // TODO
-                    if (first)
-                    {
-                        IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
-                        var x = windows.Select(kvp => new
-                            {
-                                windowtitle = kvp.Value.Title,
-                                id = kvp.Value.ProcessId
-                            });
-
-                        Console.WriteLine(JsonConvert.SerializeObject(x));
-
-                        first = false;
-                    }
+                    // prozess entfernen
+                    process.Kill();
                 }
+                // nur der erste Prozess wird aufgelistet
+                // TODO
+
+                IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
+                
+                Proc p = new Proc();
+                p.File = process.MainModule.FileName;
+                p.Id = process.Id;
+                // Liste aller Fenster dieses Prozesses
+                p.Windows = new List<Window>();
+
+                foreach (var kvp in windows)
+                {
+                    Window win = new Window();
+                    win.ProcessId = kvp.Value.ProcessId;
+                    win.Title = kvp.Value.Title;
+                    p.Windows.Add(win);
+                }
+
+                first = false;
+                foo.Add(p);
             }
+
+            Console.WriteLine(JsonConvert.SerializeObject(foo));
+
+            //Console.ReadLine();
         }
     }
 }

@@ -81,11 +81,11 @@ if (contents) {
             errorwindow.setMenu(null);
 
 
-            if(currentWindow.isDevToolsOpened()) {
+            if (currentWindow.isDevToolsOpened()) {
               errorwindow.openDevTools();
             }
 
-            console.log("loading error from: ",`file://${__dirname}/error.html`);
+            console.log("loading error from: ", `file://${__dirname}/error.html`);
 
             errorwindow.loadURL(`file://${__dirname}/error.html`);
 
@@ -103,7 +103,7 @@ if (contents) {
           var ignore = false;
           // prüfen ob der Fenstertitel ignoriert werden soll
           $.each(array, function(i, title) {
-            ignore = ignore || val.windowtitle.indexOf(title) !== -1;
+            ignore = ignore || val.Title.indexOf(title) !== -1;
           });
           return ignore;
         };
@@ -121,168 +121,182 @@ if (contents) {
           if (!err) {
             // Daten aus der abas-window-watcher.exe
             // Liste der offenen Fenster
-            var data = JSON.parse(text);
+            var processes = JSON.parse(text);
             $('#windows').html("");
-            // keine Fenster geöffnet
-            if (data.length == 0) {
-              //aktuell kein abas offen
-              var row = "<tr>";
-              row += "<td class=\"text-center\" colspan=\"2\"><b>abas nicht geöffnet</b></td>";
-              row += "</tr>";
-              $('#windows').append(row);
-              $('#activity-label').text("");
-              $('#closed-label').text("");
 
-            } else {
+            $.each(processes, function(k, proc) {
 
-              var idleTime = 10000000000000000;
-              var lastClosed = 10000000000000000;
+              var data = proc.Windows;
 
-              // geschlossene Fenster als inaktiv markieren
-              $.each(windows, function(j, foo) {
-                var found = false;
-                // nur als aktiv markierte FEnster prüfen
-                if (foo.active) {
-                  $.each(data, function(i, val) {
-                    if (foo.id == val.id) {
+              console.log("data", data);
+
+              // keine Fenster geöffnet
+              if (data.length == 0) {
+                //aktuell kein abas offen
+                var row = "<tr>";
+                row += "<td class=\"text-center\" colspan=\"3\"><b>abas nicht geöffnet</b></td>";
+                row += "</tr>";
+                $('#windows').append(row);
+                $('#activity-label').text("");
+                $('#closed-label').text("");
+
+              } else {
+
+                var idleTime = 10000000000000000;
+                var lastClosed = 10000000000000000;
+
+                // geschlossene Fenster als inaktiv markieren
+                $.each(windows, function(j, foo) {
+                  var found = false;
+                  // nur als aktiv markierte FEnster prüfen
+                  if (foo.active) {
+                    $.each(data, function(i, val) {
+                      if (foo.ProcessId == val.ProcessId) {
+                        found = true;
+                      }
+                    });
+                    // fenster nicht mehr gefunden scheinbar nicht mehr offen
+                    if (!found) {
+                      // Zeitpunkt des schließens feststellen
+                      foo.time = (new Date()).getTime();
+                      // als inaktiv markieren
+                      foo.active = false;
+                      windows[j] = foo;
+
+                      var status = {};
+                      status.windowtitle = foo.Title;
+                      status.windowid = foo.ProcessId;
+                      status.windowstatus = "closed";
+
+                      sendStatus(status);
+
+                    }
+                  } else {
+                    // für das Inaktive Fenster den Zeitraum seit dem Schließen berechnen
+                    var currentTime = ((new Date()).getTime() - foo.time);
+
+                    if (!ignoreWindow(foo)) {
+                      if (currentTime < lastClosed) {
+                        lastClosed = currentTime;
+                      }
+                    }
+
+                  }
+                });
+
+                var ignoreAll = false;
+
+                // offene Fenster prüfen
+                $.each(data, function(i, val) {
+
+                  var found = false;
+                  // alle bekannten Fenster durchgehen
+                  $.each(windows, function(j, foo) {
+                    if (foo.ProcessId == val.ProcessId && foo.Title == val.Title) {
+                      // nichts mit dem Fenster passiert
+                      val = foo;
+                      found = true;
+                      // Fenster soll ignoriert werden siehe ignore_all_windows_titles...
+                      if (ignoreAllWindow(val)) {
+                        val.time = (new Date()).getTime();
+                        windows[j] = val;
+                      }
+                    }
+                    if (foo.ProcessId == val.ProcessId && foo.Title != val.Title) {
+                      // titel vom Fenster ist anders
+                      foo.time = (new Date()).getTime();
+                      foo.Title = val.Title;
+                      windows[j] = foo;
+                      val = foo;
                       found = true;
                     }
                   });
-                  // fenster nicht mehr gefunden scheinbar nicht mehr offen
+                  // Fenster neu
                   if (!found) {
-                    // Zeitpunkt des schließens feststellen
-                    foo.time = (new Date()).getTime();
-                    // als inaktiv markieren
-                    foo.active = false;
-                    windows[j] = foo;
-
-                    var status = {};
-                    status.windowtitle = foo.windowtitle;
-                    status.windowid = foo.id;
-                    status.windowstatus = "closed";
-
-                    sendStatus(status);
-
+                    val.time = (new Date()).getTime();
+                    val.active = true;
+                    windows.push(val);
                   }
-                } else {
-                  // für das Inaktive Fenster den Zeitraum seit dem Schließen berechnen
-                  var currentTime = ((new Date()).getTime() - foo.time);
 
-                  if (!ignoreWindow(foo)) {
-                    if (currentTime < lastClosed) {
-                      lastClosed = currentTime;
+                  var currentTime = ((new Date()).getTime() - val.time);
+
+                  // prüfen ob durch dieses Fenster
+                  // alle anderen Fenster auch ignoriert werden müssen
+                  if (ignoreAllWindow(val)) {
+                    ignoreAll = true;
+                  }
+
+                  // wenn es nicht ignoriert werden kann muss geprüft werden
+                  // wie lange das Fenster schon aktiv ist
+                  var ignore = true;
+                  if (!ignoreWindow(val)) {
+                    ignore = false;
+                    if (currentTime < idleTime) {
+                      idleTime = currentTime;
                     }
                   }
 
-                }
-              });
 
-              var ignoreAll = false;
-
-              // offene Fenster prüfen
-              $.each(data, function(i, val) {
-
-                var found = false;
-                // alle bekannten Fenster durchgehen
-                $.each(windows, function(j, foo) {
-                  if (foo.id == val.id && foo.windowtitle == val.windowtitle) {
-                    // nichts mit dem Fenster passiert
-                    val = foo;
-                    found = true;
-                    // Fenster soll ignoriert werden siehe ignore_all_windows_titles...
-                    if (ignoreAllWindow(val)) {
-                      val.time = (new Date()).getTime();
-                      windows[j] = val;
-                    }
+                  var clientreg = /[\\|\/]\w*?[\\|\/]wineks\.exe/;
+                  var client = (clientreg.exec(proc.File)+"").replace("wineks.exe", "").replace(/[\\|\/]/g, "");
+                  var row = "<tr>";
+                  if (ignore) {
+                    row += "<td colspan=\"2\">" + client + "</td>";
+                    row += "<td>" + val.Title + "</td>";
+                  } else {
+                    row += "<td>" + val.Title + "</td>";
+                    row += "<td>" + client + "</td>";
+                    row += "<td>" + msToTime(currentTime) + "</td>";
                   }
-                  if (foo.id == val.id && foo.windowtitle != val.windowtitle) {
-                    // titel vom Fenster ist anders
-                    foo.time = (new Date()).getTime();
-                    foo.windowtitle = val.windowtitle;
-                    windows[j] = foo;
-                    val = foo;
-                    found = true;
-                  }
+                  row += "</tr>";
+                  $('#windows').append(row);
+
                 });
-                // Fenster neu
-                if (!found) {
-                  val.time = (new Date()).getTime();
-                  val.active = true;
-                  windows.push(val);
-                }
 
-                var currentTime = ((new Date()).getTime() - val.time);
+                if (lastClosed != 10000000000000000 && !ignoreAll) {
+                  $('#closed-label').text($.i18n("last_closed") + msToTime(lastClosed));
 
-                // prüfen ob durch dieses Fenster
-                // alle anderen Fenster auch ignoriert werden müssen
-                if (ignoreAllWindow(val)) {
-                  ignoreAll = true;
-                }
-
-                // wenn es nicht ignoriert werden kann muss geprüft werden
-                // wie lange das Fenster schon aktiv ist
-                var ignore = true;
-                if (!ignoreWindow(val)) {
-                  ignore = false;
-                  if (currentTime < idleTime) {
-                    idleTime = currentTime;
-                  }
-                }
-
-                var row = "<tr>";
-                if (ignore) {
-                  row += "<td colspan=\"2\">" + val.windowtitle + "</td>";
                 } else {
-                  row += "<td>" + val.windowtitle + "</td>";
-                  row += "<td>" + msToTime(currentTime) + "</td>";
+                  $('#closed-label').text("");
                 }
-                row += "</tr>";
-                $('#windows').append(row);
 
-              });
+                if (idleTime != 10000000000000000 && !ignoreAll) {
+                  $('#activity-label').text($.i18n("last_activity") + msToTime(idleTime));
 
-              if (lastClosed != 10000000000000000 && !ignoreAll) {
-                $('#closed-label').text($.i18n("last_closed") + msToTime(lastClosed));
+                  // Umrechung in Minuten
+                  idleTime = idleTime / 1000 / 60.0;
+                  lastClosed = lastClosed / 1000 / 60.0;
 
-              } else {
-                $('#closed-label').text("");
-              }
-
-              if (idleTime != 10000000000000000 && !ignoreAll) {
-                $('#activity-label').text($.i18n("last_activity") + msToTime(idleTime));
-
-                // Umrechung in Minuten
-                idleTime = idleTime / 1000 / 60.0;
-                lastClosed = lastClosed / 1000 / 60.0;
-
-                // Warnung ausgeben
-                if (settings.warning_time_min > 0 && idleTime > settings.warning_time_min && lastClosed > settings.close_time_min) {
-                  if (!notif) {
-                    notif = new window.Notification($.i18n("dialog_title"), {
-                      body: $.i18n("dialog_warning"),
-                      silent: false
-                    });
-                    notif.onclick = function() {
-                      notif = null;
-                    };
+                  // Warnung ausgeben
+                  if (settings.warning_time_min > 0 && idleTime > settings.warning_time_min && lastClosed > settings.close_time_min) {
+                    if (!notif) {
+                      notif = new window.Notification($.i18n("dialog_title"), {
+                        body: $.i18n("dialog_warning"),
+                        silent: false
+                      });
+                      notif.onclick = function() {
+                        notif = null;
+                      };
+                    }
                   }
-                }
-                // Fehler ausgeben
-                if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
-                  makeError();
+                  // Fehler ausgeben
+                  if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
+                    makeError();
+                  }
+
+                  // Programm beenden
+                  if (settings.kill_time_min > 0 && idleTime >= settings.kill_time_min) {
+                    exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
+                      console.log("kill Error:", err, text);
+                    });
+                  }
+                } else {
+                  $('#activity-label').text("");
                 }
 
-                // Programm beenden
-                if (settings.kill_time_min > 0 && idleTime >= settings.kill_time_min) {
-                  exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
-                    console.log("kill Error:", err, text);
-                  });
-                }
-              } else {
-                $('#activity-label').text("");
               }
+            });
 
-            }
           } else {
             // sollte ein Fehler Auftretten beim ausführen der exe
             toastr['error'](text, err);
