@@ -84,11 +84,10 @@ if (contents) {
             if(currentWindow.isDevToolsOpened()) {
               errorwindow.openDevTools();
             }
-            errorwindow.loadURL(url.format({
-              pathname: path.join(__dirname, 'error.html'),
-              protocol: 'file:',
-              slashes: true
-            }));
+
+            console.log("loading error from: ",`file://${__dirname}/error.html`);
+
+            errorwindow.loadURL(`file://${__dirname}/error.html`);
 
             //errorwindow.openDevTools();
 
