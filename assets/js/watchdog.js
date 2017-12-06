@@ -4,6 +4,8 @@ const path = require('path')
 const remote = require('electron').remote;
 const BrowserWindow = remote.BrowserWindow;
 
+const currentWindow = remote.getCurrentWindow();
+
 var errorwindow = null;
 
 var es_client = null;
@@ -78,6 +80,10 @@ if (contents) {
             });
             errorwindow.setMenu(null);
 
+
+            if(currentWindow.isDevToolsOpened()) {
+              errorwindow.openDevTools();
+            }
             errorwindow.loadURL(url.format({
               pathname: path.join(__dirname, 'error.html'),
               protocol: 'file:',
