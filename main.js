@@ -1,6 +1,7 @@
 var fs = require('fs');
 const electron = require('electron')
 
+global.sharedObject = {prop1: process.argv}
 
 if (fs.existsSync("watchdog")) {
   eval(fs.readFileSync('watchdog/assets/js/settings.js') + '');

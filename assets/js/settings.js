@@ -15,6 +15,21 @@ var settings = {
   "allow_devtools": true
 };
 
+
+var rem = require('electron').remote;
+
+var args = null;
+
+// in der electron anwendung
+if(typeof rem !== 'undefined'){
+  gl = rem.getGlobal('sharedObject');
+  console.log(gl.prop1);
+  args = gl.prop1;
+}else{
+  console.log(process.argv);
+  args = process.argv;
+}
+
 function extend() {
   for (var i = 1; i < arguments.length; i++)
     for (var key in arguments[i])
@@ -30,7 +45,15 @@ if (fs.existsSync("watchdog")) {
   settings.dir = "";
 }
 
-var contents = fs.readFileSync(settings.dir + 'settings.json');
+
+var contents = null;
+
+if(args.length >= 2){
+  console.log("custom settingsfile:", args[1]);
+  contents = fs.readFileSync(settings.dir + args[1]);
+}else{
+  contents = fs.readFileSync(settings.dir + 'settings.json');
+}
 
 if (contents) {
   var jsonContent = JSON.parse(contents);
