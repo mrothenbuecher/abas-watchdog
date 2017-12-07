@@ -48,9 +48,9 @@ if (fs.existsSync("watchdog")) {
 
 var contents = null;
 
-if(args.length >= 2){
-  console.log("custom settingsfile:", args[1]);
-  contents = fs.readFileSync(settings.dir + args[1]);
+if(args.length >= 2 && args[args.length-1].match(/\.json/)){
+  console.log("custom settingsfile:", args[args.length-1]);
+  contents = fs.readFileSync(settings.dir + args[args.length-1]);
 }else{
   contents = fs.readFileSync(settings.dir + 'settings.json');
 }
