@@ -237,17 +237,20 @@ if (contents) {
                   }
 
 
-                  var clientreg = /[\\|\/]\w*?[\\|\/]wineks\.exe/;
-                  var client = (clientreg.exec(proc.File)+"").replace("wineks.exe", "").replace(/[\\|\/]/g, "");
+                  var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]wineks\.exe/;
+                  var client = (clientreg.exec(proc.File)[0] + "").replace("wineks.exe", "").replace(/[\\|\/]/g, "");
+
                   var row = "<tr>";
+                  /*
                   if (ignore) {
-                    row += "<td colspan=\"2\">" + client + "</td>";
-                    row += "<td>" + val.Title + "</td>";
-                  } else {
                     row += "<td>" + val.Title + "</td>";
                     row += "<td>" + client + "</td>";
                     row += "<td>" + msToTime(currentTime) + "</td>";
-                  }
+                  } else {*/
+                  row += "<td>" + val.Title + "</td>";
+                  row += "<td>" + client + "</td>";
+                  row += "<td>" + msToTime(currentTime) + "</td>";
+                  //}
                   row += "</tr>";
                   $('#windows').append(row);
 
