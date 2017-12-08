@@ -285,6 +285,10 @@ if (contents) {
                   // Fehler ausgeben
                   if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                     makeError();
+                  } else{
+                    if(errorwindow && errorwindow.isVisible()){
+                      errorwindow.hide();
+                    }
                   }
 
                   // Programm beenden
