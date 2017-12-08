@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="node_modules/material-design-lite/dist/material.blue_grey-red.min.css">
   <link rel="stylesheet" href="node_modules/toastr/build/toastr.css">
+  <link rel="stylesheet" type="text/css" href="node_modules/dialog-polyfill/dialog-polyfill.css" />
   <link rel="stylesheet" href="assets/css/context.standalone.css">
   <link rel="stylesheet" href="assets/css/styles.css">
   <!-- um jquery zum laufen zubringen -->
@@ -22,6 +23,7 @@
     }
   </script>
   <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="node_modules/dialog-polyfill/dialog-polyfill.js"></script>
   <script src="assets/js/jquery.i18n.js"></script>
   <script src="assets/js/jquery.i18n.messagestore.js"></script>
   <script src="assets/js/jquery.i18n.fallbacks.js"></script>
@@ -78,6 +80,19 @@
       </div>
     </main>
   </div>
+
+  <dialog class="mdl-dialog">
+    <h4 class="mdl-dialog__title" data-i18n="dialog_title">Allow data collection?</h4>
+    <div class="mdl-dialog__content">
+      <p data-i18n="dialog_error">
+        Allowing us to collect data will let us get you the information you want faster.
+      </p>
+    </div>
+    <div class="mdl-dialog__actions" >
+      <button type="button" class="mdl-button close" data-i18n="ok">Ok</button>
+    </div>
+  </dialog>
+
   <!-- fremd -->
   <script src="node_modules/material-design-lite/material.min.js"></script>
   <script src="node_modules/toastr/build/toastr.min.js"></script>
@@ -120,13 +135,13 @@
 -->
 
   <!-- settings -->
-    <script src="assets/js/settings.js"></script>
+  <script src="assets/js/settings.js"></script>
 
-    <!-- watchdog -->
-    <script src="assets/js/watchdog.js"></script>
+  <!-- watchdog -->
+  <script src="assets/js/watchdog.js"></script>
 
-    <!-- lang -->
-    <script src="assets/js/lang.js"></script>
+  <!-- lang -->
+  <script src="assets/js/lang.js"></script>
   -->
 </body>
 

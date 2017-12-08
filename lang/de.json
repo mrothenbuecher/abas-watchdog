@@ -14,5 +14,6 @@
     "dialog_title":"abas Lizenz freigeben",
     "dialog_warning":"Falls sie keine Lizenz benötigen schließen sie bitte das abas ERP",
     "dialog_error":"Sie sind scheinbar inaktiv. Schließen sie das abas ERP.",
-    "last_closed":"letztes Fenster geschlossen vor: "
+    "last_closed":"letztes Fenster geschlossen vor: ",
+    "ok":"ok"
 }

@@ -6,8 +6,6 @@ const BrowserWindow = remote.BrowserWindow;
 
 const currentWindow = remote.getCurrentWindow();
 
-var errorwindow = null;
-
 var es_client = null;
 
 if (settings.elasticsearch) {
@@ -37,6 +35,12 @@ var sendStatus = function(status) {
 
   }
 };
+
+var dialog = document.querySelector('dialog');
+
+dialog.querySelector('.close').addEventListener('click', function() {
+  dialog.close();
+});
 
 if (contents) {
 
@@ -72,31 +76,14 @@ if (contents) {
       var dog = function() {
 
         var makeError = function() {
-          if (!errorwindow) {
-            errorwindow = new BrowserWindow({
-              width: 500,
-              height: 300,
-              icon: __dirname + '/images/abas.ico'
-            });
-            errorwindow.setMenu(null);
 
+          var dialog = document.querySelector('dialog');
 
-            if (currentWindow.isDevToolsOpened()) {
-              errorwindow.openDevTools();
-            }
-
-            console.log("loading error from: ", `file://${__dirname}/error.html`);
-
-            errorwindow.loadURL(`file://${__dirname}/error.html`);
-
-            //errorwindow.openDevTools();
-
-            errorwindow.on('close', function(e) {
-              e.preventDefault();
-              errorwindow = null;
-              //TODO Log
-            });
+          if (!$("dialog").is("[open]")) {
+            dialog.showModal();
           }
+          currentWindow.show();
+          currentWindow.focus();
         };
 
         var ignore = function(val, array) {
@@ -127,8 +114,6 @@ if (contents) {
             $.each(processes, function(k, proc) {
 
               var data = proc.Windows;
-
-              //console.log("data", data);
 
               // keine Fenster geöffnet
               if (data.length == 0) {
@@ -285,9 +270,9 @@ if (contents) {
                   // Fehler ausgeben
                   if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                     makeError();
-                  } else{
-                    if(errorwindow && errorwindow.isVisible()){
-                      errorwindow.hide();
+                  } else {
+                    if (currentWindow && currentWindow.isVisible()) {
+                      currentWindow.hide();
                     }
                   }
 

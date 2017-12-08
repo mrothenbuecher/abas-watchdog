@@ -14,5 +14,6 @@
     "dialog_title":"please release abas license",
     "dialog_warning":"If you do not need a license, please close",
     "dialog_error":"They are seemingly inactive. Close the abas ERP.",
-    "last_closed":"closed last window: "
+    "last_closed":"closed last window: ",
+    "ok":"ok"
 }
