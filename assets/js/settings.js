@@ -12,7 +12,8 @@ var settings = {
   "elasticsearch": null,
   "dir": "",
   "allow_quit": true,
-  "allow_devtools": true
+  "allow_devtools": true,
+  "reshow_error_time_sec": 10
 };
 
 

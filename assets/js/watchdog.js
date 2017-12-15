@@ -6,6 +6,9 @@ const BrowserWindow = remote.BrowserWindow;
 
 const currentWindow = remote.getCurrentWindow();
 
+var errorInterval = -1;
+var windowwashidden = true;
+
 var es_client = null;
 
 if (settings.elasticsearch) {
@@ -46,9 +49,11 @@ if (contents) {
 
   (function() {
     var exec = require('child_process').execFile;
-    const {
-      dialog
-    } = require('electron').remote;
+    /*
+        const {
+          dialog
+        } = require('electron').remote;
+    */
 
     if (settings) {
       var windows = [];
@@ -72,36 +77,56 @@ if (contents) {
         return pad(hrs) + ':' + pad(mins);
       }
 
+      var makeError = function() {
+        if (errorInterval == -1) {
+          errorInterval = setInterval(function() {
+            var dialog = document.querySelector('dialog');
+            if (!$("dialog").is("[open]")) {
+              dialog.showModal();
+            }
+            currentWindow.show();
+            currentWindow.focus();
+            windowwashidden = false;
+          }, settings.reshow_error_time_sec * 1000);
+        }
+      };
+
+      var disableDialog = function(){
+        if (errorInterval != -1) {
+          console.log("stop errorInterval");
+          clearInterval(errorInterval);
+          errorInterval = -1;
+        }
+
+        var dialog = document.querySelector('dialog');
+
+        console.log("is open:", $("dialog").is("[open]"));
+
+        if ($("dialog").is("[open]")) {
+          console.log("schließen");
+          dialog.close();
+        }
+      };
+
+      var ignore = function(val, array) {
+        var ignore = false;
+        // prüfen ob der Fenstertitel ignoriert werden soll
+        $.each(array, function(i, title) {
+          ignore = ignore || val.Title.indexOf(title) !== -1;
+        });
+        return ignore;
+      };
+
+      var ignoreWindow = function(val) {
+        return ignore(val, settings.ignore_windows_titles);
+      };
+
+      var ignoreAllWindow = function(val) {
+        return ignore(val, settings.ignore_all_windows_titles);
+      };
+
       // Methode welche die ganze Arbeit übernimmt
       var dog = function() {
-
-        var makeError = function() {
-
-          var dialog = document.querySelector('dialog');
-
-          if (!$("dialog").is("[open]")) {
-            dialog.showModal();
-          }
-          currentWindow.show();
-          currentWindow.focus();
-        };
-
-        var ignore = function(val, array) {
-          var ignore = false;
-          // prüfen ob der Fenstertitel ignoriert werden soll
-          $.each(array, function(i, title) {
-            ignore = ignore || val.Title.indexOf(title) !== -1;
-          });
-          return ignore;
-        };
-
-        var ignoreWindow = function(val) {
-          return ignore(val, settings.ignore_windows_titles);
-        };
-
-        var ignoreAllWindow = function(val) {
-          return ignore(val, settings.ignore_all_windows_titles);
-        };
 
         // abas window watcher exe ausführen
         exec(settings.dir + "abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
@@ -268,11 +293,17 @@ if (contents) {
                     }
                   }
                   // Fehler ausgeben
+                  console.log("errorInterval:", errorInterval);
                   if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                     makeError();
                   } else {
-                    if (currentWindow && currentWindow.isVisible()) {
+
+                    disableDialog();
+
+                    // wenn mal die Fehlermeldung angezeigt war nun aber nicht mehr wird watchdog wieder verstecken
+                    if (currentWindow && currentWindow.isVisible() && !windowwashidden) {
                       currentWindow.hide();
+                      windowwashidden = true;
                     }
                   }
 
@@ -284,6 +315,9 @@ if (contents) {
                   }
                 } else {
                   $('#activity-label').text("");
+                  if(ignoreAll)
+                    disableDialog();
+
                 }
 
               }
@@ -297,11 +331,11 @@ if (contents) {
       };
 
       // beim starten einmal ausführen
-      dog();
+      //dog();
       // dannach in Zeitlich festen interval
       setInterval(dog, settings.refresh_interval_ms);
     } else {
-      dialog.showErrorBox("assets/settings.json", "Missing / couldn't read");
+      toastr['error']("assets/settings.json", "Missing / couldn't read");
     }
   })();
 

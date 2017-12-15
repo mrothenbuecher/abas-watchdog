@@ -28,6 +28,7 @@ Die Einstellung erfolgt mittels der `settings.json` im Ordner watchdog.
 | error_time_min            |   int  | Anzahl der Minuten (inaktiv) bis zur Fehlermeldung                                                          |                       15                   |
 | close_time_min            |   int  | Anzahl der Minuten nach dem schließen eines Fensters nach dem wieder Warnungen,Fehler usw. angezeigt werden |                        1                   |
 | kill_time_min             |   int  | Anzahl der Minuten (inaktiv) nach dem abas geschlossen wird                                                 |                        0                   |
+| reshow_error_time_sec     |   int  | Anzahl der Sekunden nach dem die Fehlermeldung erneut angezeigt wird                                        |                        10                  |
 | singleton                 |  bool  | Es darf nur eine Instanz von abas geöffnet sein andere werden geschlossen                                   |                      false                 |
 | ignore_windows_titles     |  Array | Titel, Teilzeichenketten der Fenster die bei der Inaktivitätsbetrachtung ignoriert werden                   | ["abas ERP Kommandoübersicht", "abas ERP"] |
 | ignore_all_windows_titles |  Array | Titel, Teilzeichenketten der Fenster bei deren Vorkommen alle Fenster ignoriert werden                      |                ["bitte warten"]            |

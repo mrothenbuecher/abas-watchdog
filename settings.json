@@ -3,6 +3,7 @@
   "error_time_min": 15,
   "close_time_min": 1,
   "kill_time_min": 0,
+  "reshow_error_time_sec": 10,
   "singleton": false,
   "ignore_windows_titles": ["abas ERP Kommandoübersicht", "abas ERP", "bitte warten"],
   "dont_kill": ["abas ERP Kommandoübersicht"],
