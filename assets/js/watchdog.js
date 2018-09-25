@@ -246,9 +246,14 @@ if (contents) {
                     }
                   }
 
-
-                  var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]wineks\.exe/;
-                  var client = (clientreg.exec(proc.File)[0] + "").replace("wineks.exe", "").replace(/[\\|\/]/g, "");
+                  var client ="";
+                  if(proc.File.includes("wineks")){
+                    var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]wineks\.exe/;
+                    client = (clientreg.exec(proc.File)[0] + "").replace("wineks.exe", "").replace(/[\\|\/]/g, "");
+                  }else if(proc.File.includes("abaserpgui")){
+                    var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]abaserpgui\.exe/;
+                    client = (clientreg.exec(proc.File)[0] + "").replace("abaserpgui.exe", "").replace(/[\\|\/]/g, "");
+                  }
 
                   var row = "<tr>";
                   /*

@@ -93,8 +93,10 @@ namespace AbasWindowWatcher
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Process[] processes = Process.GetProcessesByName("wineks");
+            Process[] processes3 = Process.GetProcessesByName("wineks");
+            Process[] processes2 = Process.GetProcessesByName("abasgui");
 
+            Process[] processes = processes3.Concat(processes2).ToArray();
             if (processes.Length == 0)
             {
                 Console.WriteLine("[{\"Windows\":[]}]");
