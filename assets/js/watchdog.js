@@ -250,9 +250,9 @@ if (contents) {
                   if(proc.File.includes("wineks")){
                     var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]wineks\.exe/;
                     client = (clientreg.exec(proc.File)[0] + "").replace("wineks.exe", "").replace(/[\\|\/]/g, "");
-                  }else if(proc.File.includes("abaserpgui")){
-                    var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]abaserpgui\.exe/;
-                    client = (clientreg.exec(proc.File)[0] + "").replace("abaserpgui.exe", "").replace(/[\\|\/]/g, "");
+                  }else if(proc.File.includes("abasgui")){
+                    var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]abasgui\.exe/;
+                    client = (clientreg.exec(proc.File)[0] + "").replace("abasgui.exe", "").replace(/[\\|\/]/g, "");
                   }
 
                   var row = "<tr>";
@@ -273,7 +273,6 @@ if (contents) {
 
                 if (lastClosed != 10000000000000000 && !ignoreAll) {
                   $('#closed-label').text($.i18n("last_closed") + msToTime(lastClosed));
-
                 } else {
                   $('#closed-label').text("");
                 }
@@ -299,6 +298,7 @@ if (contents) {
                   }
                   // Fehler ausgeben
                   console.log("errorInterval:", errorInterval);
+
                   if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                     makeError();
                   } else {
@@ -320,7 +320,7 @@ if (contents) {
                   }
                 } else {
                   $('#activity-label').text("");
-                  if(ignoreAll)
+                  if(ignoreAll || errorInterval != -1)
                     disableDialog();
 
                 }
