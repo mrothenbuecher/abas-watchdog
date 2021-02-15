@@ -7,9 +7,8 @@
   "main": "main.js",
   "scripts": {
     "start": "npm install && electron .",
-    "pack": "build --dir",
-    "dist:x64": "build -w --x64",
-    "dist:ia32": "build -w --ia32"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": "",
   "build": {
