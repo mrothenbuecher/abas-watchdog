@@ -35,7 +35,11 @@ function createWindow() {
 
   mainWindow = new BrowserWindow({
     icon: __dirname + '/images/abas.ico',
-    show: false
+    show: false,
+    webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true
+        }
   });
   mainWindow.setMenu(null);
   //mainWindow.openDevTools();
@@ -90,11 +94,11 @@ function createWindow() {
   });
 
   mainWindow.on('show', () => {
-    tray.setHighlightMode('always');
+    //tray.setHighlightMode('always');
   });
 
   mainWindow.on('hide', () => {
-    tray.setHighlightMode('never');
+    //tray.setHighlightMode('never');
   });
 
   // Hauptfenster wird nicht geschlossen nur versteckt
@@ -108,7 +112,7 @@ function createWindow() {
   mainWindow.hide();
 }
 
-
+/*
 var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
   // Someone tried to run a second instance, we should focus our window.
   if (mainWindow) {
@@ -117,6 +121,9 @@ var shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) 
     //mainWindow.focus();
   }
 });
+*/
+
+var shouldQuit = !app.requestSingleInstanceLock();
 
 if (shouldQuit) {
   app.quit();
