@@ -110,7 +110,14 @@ namespace AbasWindowWatcher
                 // abas-window-watcher.exe kill
                 foreach (Process process in processes)
                 {
-                    process.Kill();
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch (Exception e)
+                    { 
+                        //TODO
+                    }
                 }
                 return;
             }
@@ -122,24 +129,29 @@ namespace AbasWindowWatcher
 
                 foreach (Process process in processes)
                 {
-                    IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
-                    foreach (var kvp in windows)
+                    try
                     {
-                        bool kill = true;
-
-                        foreach (string name in names)
+                        IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
+                        foreach (var kvp in windows)
                         {
-                            if (kvp.Value.Title.Contains(name))
+                            bool kill = true;
+
+                            foreach (string name in names)
                             {
-                                kill = false;
-                                break;
+                                if (kvp.Value.Title.Contains(name))
+                                {
+                                    kill = false;
+                                    break;
+                                }
+                            }
+
+                            if (kill)
+                            {
+                                CloseWindow(kvp.Key);
                             }
                         }
-
-                        if (kill)
-                        {
-                            CloseWindow(kvp.Key);
-                        }
+                    }catch(Exception e) { 
+                        //TODO
                     }
                 }
                 return;
@@ -155,34 +167,41 @@ namespace AbasWindowWatcher
 
             foreach (Process process in processes)
             {
-                // nicht der erste Prozess
-                // und singleton
-                if (!first && singleton)
+                try
                 {
-                    // prozess entfernen
-                    process.Kill();
+                    // nicht der erste Prozess
+                    // und singleton
+                    if (!first && singleton)
+                    {
+                        // prozess entfernen
+                        process.Kill();
+                    }
+                    // nur der erste Prozess wird aufgelistet
+                    // TODO
+
+                    IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
+
+                    Proc p = new Proc();
+                    p.File = process.MainModule.FileName;
+                    p.Id = process.Id;
+                    // Liste aller Fenster dieses Prozesses
+                    p.Windows = new List<Window>();
+
+                    foreach (var kvp in windows)
+                    {
+                        Window win = new Window();
+                        win.ProcessId = kvp.Value.ProcessId;
+                        win.Title = kvp.Value.Title;
+                        p.Windows.Add(win);
+                    }
+
+                    first = false;
+                    foo.Add(p);
                 }
-                // nur der erste Prozess wird aufgelistet
-                // TODO
-
-                IDictionary<IntPtr, Window> windows = GetOpenWindowsFromPID(process.Id);
-                
-                Proc p = new Proc();
-                p.File = process.MainModule.FileName;
-                p.Id = process.Id;
-                // Liste aller Fenster dieses Prozesses
-                p.Windows = new List<Window>();
-
-                foreach (var kvp in windows)
+                catch (Exception e)
                 {
-                    Window win = new Window();
-                    win.ProcessId = kvp.Value.ProcessId;
-                    win.Title = kvp.Value.Title;
-                    p.Windows.Add(win);
+                    //TODO 
                 }
-
-                first = false;
-                foo.Add(p);
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(foo));
