@@ -1,5 +1,6 @@
 const url = require('url')
 const path = require('path')
+const log = require('electron-log');
 
 const remote = require('electron').remote;
 
@@ -90,7 +91,7 @@ if (contents) {
         }
       };
 
-      var disableDialog = function(){
+      var disableDialog = function() {
         if (errorInterval != -1) {
           console.log("stop errorInterval");
           clearInterval(errorInterval);
@@ -245,11 +246,11 @@ if (contents) {
                     }
                   }
 
-                  var client ="";
-                  if(proc.File.includes("wineks")){
+                  var client = "";
+                  if (proc.File.includes("wineks")) {
                     var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]wineks\.exe/;
                     client = (clientreg.exec(proc.File)[0] + "").replace("wineks.exe", "").replace(/[\\|\/]/g, "");
-                  }else if(proc.File.includes("abasgui")){
+                  } else if (proc.File.includes("abasgui")) {
                     var clientreg = /[\\|\/]((?!\\|\/).)*?[\\|\/]abasgui\.exe/;
                     client = (clientreg.exec(proc.File)[0] + "").replace("abasgui.exe", "").replace(/[\\|\/]/g, "");
                   }
@@ -285,6 +286,7 @@ if (contents) {
 
                   // Warnung ausgeben
                   if (settings.warning_time_min > 0 && idleTime > settings.warning_time_min && lastClosed > settings.close_time_min) {
+                    log.debug("Warnungsdialog: " + settings.warning_time_min + " " + idleTime + " " + lastClosed + " " + settings.close_time_min);
                     if (!notif) {
                       notif = new window.Notification($.i18n("dialog_title"), {
                         body: $.i18n("dialog_warning"),
@@ -301,9 +303,7 @@ if (contents) {
                   if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                     makeError();
                   } else {
-
                     disableDialog();
-
                     // wenn mal die Fehlermeldung angezeigt war nun aber nicht mehr wird watchdog wieder verstecken
                     if (currentWindow && currentWindow.isVisible() && !windowwashidden) {
                       currentWindow.hide();
@@ -315,20 +315,20 @@ if (contents) {
                   if (settings.kill_time_min > 0 && idleTime >= settings.kill_time_min) {
                     exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
                       console.log("kill Error:", err, text);
+                      log.error("Fehler beim Beenden des Programss: " + err + "\n"+text);
                     });
                   }
                 } else {
                   $('#activity-label').text("");
-                  if(ignoreAll || errorInterval != -1)
+                  if (ignoreAll || errorInterval != -1)
                     disableDialog();
-
                 }
-
               }
             });
 
           } else {
             // sollte ein Fehler Auftretten beim ausführen der exe
+            log.error("Fehler beim ausführen abas-window-watcher.exe "+err);
             toastr['error'](text, err);
           }
         });
@@ -339,10 +339,12 @@ if (contents) {
       // dannach in Zeitlich festen interval
       setInterval(dog, settings.refresh_interval_ms);
     } else {
+      log.error("assets/settings.json -> Missing / couldn't read");
       toastr['error']("assets/settings.json", "Missing / couldn't read");
     }
   })();
 
 } else {
+  log.error('couldn`t find settings.json');
   toastr['error']('couldn`t find settings.json');
 }
