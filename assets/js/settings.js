@@ -13,9 +13,10 @@ var settings = {
   "dir": "",
   "allow_quit": true,
   "allow_devtools": true,
-  "reshow_error_time_sec": 10
+  "reshow_error_time_sec": 10,
+  "web_config":""
 };
-
+const got = require('got');
 
 var rem = require('electron').remote;
 
@@ -24,10 +25,10 @@ var args = null;
 // in der electron anwendung
 if(typeof rem !== 'undefined'){
   gl = rem.getGlobal('sharedObject');
-  console.log(gl.prop1);
+  //console.log(gl.prop1);
   args = gl.prop1;
 }else{
-  console.log(process.argv);
+  //console.log(process.argv);
   args = process.argv;
 }
 
@@ -37,6 +38,20 @@ function extend() {
       if (arguments[i].hasOwnProperty(key))
         arguments[0][key] = arguments[i][key];
   return arguments[0];
+}
+
+function requestSettings(url){
+  got.get(url, {responseType: 'json'}).then(response => {
+    //console.log("Web Settings:",response,"Lang:",.lang);
+    settings = extend(settings, response.body);
+    settings.web_config = url;
+  }).catch(error => {
+    console.error("Error while retrieving web config: ", error);
+  });
+  // reload Settings every minute
+  setTimeout(function(){
+    requestSettings(url);
+  }, 60000);
 }
 
 var fs = require('fs');
@@ -50,7 +65,7 @@ if (fs.existsSync("watchdog")) {
 var contents = null;
 
 if(args.length >= 2 && args[args.length-1].match(/\.json/)){
-  console.log("custom settingsfile:", args[args.length-1]);
+  //console.log("custom settingsfile:", args[args.length-1]);
   contents = fs.readFileSync(settings.dir + args[args.length-1]);
 }else{
   contents = fs.readFileSync(settings.dir + 'settings.json');
@@ -60,4 +75,7 @@ if (contents) {
   var jsonContent = JSON.parse(contents);
   // Einstellung aus Datei lesen
   settings = extend(settings, jsonContent);
+  if(settings.web_config){
+    requestSettings(settings.web_config);
+  }
 }

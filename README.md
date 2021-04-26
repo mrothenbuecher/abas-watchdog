@@ -37,6 +37,7 @@ Die Einstellung erfolgt mittels der `settings.json` im Ordner watchdog.
 | allow_devtools            |  bool  | vom Traymenü aus sollen die Entwicklungswerkzeuge anzeigbar sein?                                           |                     true                   |
 | allow_quit                |  bool  | vom Traymenü aus das Programm beenden                                                                       |                     true                   |
 | dont_kill                 |  Array | Titel, Teilzeichenketten der Fenster die nicht geschlossen werden                                           | ["abas ERP Kommandoübersicht"]             |
+| web_config           | String | URL unter der die Settings zentral gespeichert sind                                                              |                                       "" |
 
 ## Installation
 

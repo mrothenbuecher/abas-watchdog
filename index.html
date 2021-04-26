@@ -81,11 +81,23 @@
     </main>
   </div>
 
-  <dialog class="mdl-dialog">
+  <dialog class="mdl-dialog" id="dialog">
     <h4 class="mdl-dialog__title" data-i18n="dialog_title">Allow data collection?</h4>
     <div class="mdl-dialog__content">
       <p data-i18n="dialog_error">
         Allowing us to collect data will let us get you the information you want faster.
+      </p>
+    </div>
+    <div class="mdl-dialog__actions" >
+      <button type="button" class="mdl-button close" data-i18n="ok">Ok</button>
+    </div>
+  </dialog>
+
+  <dialog class="mdl-dialog" id="settingsdialog">
+    <h4 class="mdl-dialog__title">Settings</h4>
+    <div class="mdl-dialog__content">
+      <p id="settings">
+
       </p>
     </div>
     <div class="mdl-dialog__actions" >
@@ -142,7 +154,10 @@
 
   <!-- lang -->
   <script src="assets/js/lang.js"></script>
-  -->
+
+  <!-- ipc -->
+  <script src="assets/js/ipc.js"></script>
+
 </body>
 
 </html>

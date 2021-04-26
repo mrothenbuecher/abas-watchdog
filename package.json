@@ -1,7 +1,7 @@
 {
   "name": "abas-watchdog",
   "productName": "abas-watchdog",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "a License Watchdog for abas-ERP",
   "homepage": "https://github.com/mrothenbuecher/abas-watchdog",
   "main": "main.js",
@@ -57,12 +57,14 @@
     "elasticsearch": "^12.1.3",
     "electron-debug": "^1.1.0",
     "electron-log": "^4.3.2",
+    "got": "^11.8.2",
+    "https": "^1.0.0",
     "jquery": "^3.5.1",
     "material-design-lite": "^1.2.1",
     "toastr": "^2.1.2"
   },
   "devDependencies": {
     "electron": "^11.2.3",
-    "electron-builder": "^19.49.2"
+    "electron-builder": "^22.10.5"
   }
 }

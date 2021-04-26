@@ -39,10 +39,16 @@ var sendStatus = function(status) {
   }
 };
 
-var dialog = document.querySelector('dialog');
+var dialog = document.querySelector('#dialog');
 
 dialog.querySelector('.close').addEventListener('click', function() {
   dialog.close();
+});
+
+var settingsdialog = document.querySelector('#settingsdialog');
+
+settingsdialog.querySelector('.close').addEventListener('click', function() {
+  settingsdialog.close();
 });
 
 if (contents) {
@@ -79,8 +85,7 @@ if (contents) {
       var makeError = function() {
         if (errorInterval == -1) {
           errorInterval = setInterval(function() {
-            var dialog = document.querySelector('dialog');
-            if (!$("dialog").is("[open]")) {
+            if (!$("#dialog").is("[open]")) {
               dialog.showModal();
             }
             currentWindow.show();
@@ -92,17 +97,15 @@ if (contents) {
 
       var disableDialog = function() {
         if (errorInterval != -1) {
-          console.log("stop errorInterval");
+          //console.log("stop errorInterval");
           clearInterval(errorInterval);
           errorInterval = -1;
         }
 
-        var dialog = document.querySelector('dialog');
+        //console.log("is open:", $("#dialog").is("[open]"));
 
-        console.log("is open:", $("dialog").is("[open]"));
-
-        if ($("dialog").is("[open]")) {
-          console.log("schließen");
+        if ($("#dialog").is("[open]")) {
+          //console.log("schließen");
           dialog.close();
         }
       };
@@ -135,7 +138,7 @@ if (contents) {
               // Liste der offenen Fenster
               var processes = JSON.parse(text);
               $('#windows').html("");
-              console.log(processes);
+              //console.log(processes);
               $.each(processes, function(k, proc) {
 
                 var data = proc.Windows;
@@ -302,7 +305,7 @@ if (contents) {
                       }
                     }
                     // Fehler ausgeben
-                    console.log("errorInterval:", errorInterval);
+                    //console.log("errorInterval:", errorInterval);
 
                     if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
                       makeError();
@@ -326,7 +329,7 @@ if (contents) {
                       if(kill){
                         exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
                           if(err){
-                            console.log("kill Error:", err, text);
+                            //console.log("kill Error:", err, text);
                             log.error("Fehler beim Beenden des Programss: " + err + "\n" + text);
                           }
                         });

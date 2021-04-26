@@ -1,11 +1,13 @@
 var fs = require('fs');
 const electron = require('electron')
 
-global.sharedObject = {prop1: process.argv}
+global.sharedObject = {
+  prop1: process.argv
+}
 
 if (fs.existsSync("watchdog")) {
   eval(fs.readFileSync('watchdog/assets/js/settings.js') + '');
-}else{
+} else {
   eval(fs.readFileSync('assets/js/settings.js') + '');
 }
 // dafür sorgen das die devtools angezeigt werden
@@ -18,6 +20,7 @@ require('electron-debug')({
 const app = electron.app
 const Tray = electron.Tray
 const Menu = electron.Menu
+const { ipcMain } = require('electron')
 
 const BrowserWindow = electron.BrowserWindow
 
@@ -37,9 +40,9 @@ function createWindow() {
     icon: __dirname + '/images/abas.ico',
     show: false,
     webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true
-        }
+      nodeIntegration: true,
+      enableRemoteModule: true
+    }
   });
   mainWindow.setMenu(null);
   //mainWindow.openDevTools();
@@ -58,6 +61,14 @@ function createWindow() {
     type: 'normal',
     click: function() {
       mainWindow.show();
+    }
+  });
+
+  menu.push({
+    label: 'settings',
+    type: 'normal',
+    click: function() {
+      mainWindow.webContents.send('message', 'ping');
     }
   });
 
