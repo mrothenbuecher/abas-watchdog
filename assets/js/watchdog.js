@@ -135,7 +135,7 @@ if (contents) {
               // Liste der offenen Fenster
               var processes = JSON.parse(text);
               $('#windows').html("");
-
+              console.log(processes);
               $.each(processes, function(k, proc) {
 
                 var data = proc.Windows;
@@ -151,6 +151,7 @@ if (contents) {
                   $('#closed-label').text("");
                   windows = [];
                   notif = null;
+                  disableDialog();
 
                 } else {
 
@@ -243,6 +244,7 @@ if (contents) {
                     var ignore = true;
                     if (!ignoreWindow(val)) {
                       ignore = false;
+                      // die idleTime überschreiben falls diese größer ist als die des aktuellen Fensters
                       if (currentTime < idleTime) {
                         idleTime = currentTime;
                       }
@@ -314,11 +316,22 @@ if (contents) {
                     }
 
                     // Programm beenden
-                    if (settings.kill_time_min > 0 && idleTime >= settings.kill_time_min) {
-                      exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
-                        console.log("kill Error:", err, text);
-                        log.error("Fehler beim Beenden des Programss: " + err + "\n" + text);
-                      });
+                    if (settings.kill_time_min > 0) {
+                      var kill = idleTime >= settings.kill_time_min;
+
+                      if(kill && settings.error_time_min > 0){
+                        kill = idleTime > settings.error_time_min && lastClosed > settings.close_time_min;
+                      }
+
+                      if(kill){
+                        exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
+                          if(err){
+                            console.log("kill Error:", err, text);
+                            log.error("Fehler beim Beenden des Programss: " + err + "\n" + text);
+                          }
+                        });
+                        disableDialog();
+                      }
                     }
                   } else {
                     $('#activity-label').text("");
