@@ -3,6 +3,24 @@ const path = require('path')
 const log = require('electron-log');
 
 const remote = require('electron').remote;
+const app = require('electron').remote.app
+
+console.log(app.getPath("temp"));
+
+fs.copyFile(settings.dir + "abas-window-watcher.exe", app.getPath("temp")+"\\"+"abas-window-watcher.exe", (err) => {
+  if (err) throw err;
+  console.log('abas-window-watcher.exe was copied to '+app.getPath("temp")+"\\"+"abas-window-watcher.exe");
+});
+
+fs.copyFile(settings.dir + "Newtonsoft.Json.dll", app.getPath("temp")+"\\"+"Newtonsoft.Json.dll", (err) => {
+  if (err) throw err;
+  console.log('Newtonsoft.Json.dll was copied to '+app.getPath("temp")+"\\"+"Newtonsoft.Json.dll");
+});
+
+fs.copyFile(settings.dir + "Newtonsoft.Json.xml", app.getPath("temp")+"\\"+"Newtonsoft.Json.xml", (err) => {
+  if (err) throw err;
+  console.log('Newtonsoft.Json.xml was copied to '+app.getPath("temp")+"\\"+"Newtonsoft.Json.xml");
+});
 
 const currentWindow = remote.getCurrentWindow();
 
@@ -131,7 +149,7 @@ if (contents) {
       var dog = function() {
 
         // abas window watcher exe ausführen
-        exec(settings.dir + "abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
+        exec(app.getPath("temp")+"\\"+"abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
           try {
             if (!err) {
               // Daten aus der abas-window-watcher.exe
@@ -322,13 +340,13 @@ if (contents) {
                     if (settings.kill_time_min > 0) {
                       var kill = idleTime >= settings.kill_time_min;
 
-                      if(kill && settings.error_time_min > 0){
+                      if (kill && settings.error_time_min > 0) {
                         kill = idleTime > settings.error_time_min && lastClosed > settings.close_time_min;
                       }
 
-                      if(kill){
+                      if (kill) {
                         exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
-                          if(err){
+                          if (err) {
                             //console.log("kill Error:", err, text);
                             log.error("Fehler beim Beenden des Programss: " + err + "\n" + text);
                           }
@@ -349,7 +367,7 @@ if (contents) {
               log.error("Fehler beim ausführen abas-window-watcher.exe " + err);
               toastr['error'](text, err);
             }
-          } catch(e) {
+          } catch (e) {
             console.error("Ausnahme:", e);
           } finally {
             setTimeout(dog, settings.refresh_interval_ms);
