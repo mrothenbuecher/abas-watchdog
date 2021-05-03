@@ -32,10 +32,14 @@ var windowwashidden = true;
 var es_client = null;
 
 if (settings.elasticsearch) {
-  var elasticsearch = require('elasticsearch');
+  const {
+    Client: Client7
+  } = require('es7')
 
-  es_client = new elasticsearch.Client({
-    host: settings.elasticsearch.host
+  console.log(settings.elasticsearch.host);
+
+  const es_client = new Client7({
+    node: settings.elasticsearch.host
   });
 }
 
@@ -49,6 +53,7 @@ var sendStatus = function(status) {
     var os = require("os");
     status.hostname = os.hostname();
     status.timestamp = n;
+    status.user = settings.current_user;
 
     es_client.index({
       index: 'abas-watchdog',
@@ -147,6 +152,8 @@ if (contents) {
         return ignore(val, settings.ignore_all_windows_titles);
       };
 
+      counter = 0;
+
       // Methode welche die ganze Arbeit übernimmt
       var dog = function() {
 
@@ -154,6 +161,9 @@ if (contents) {
         exec(app.getPath("temp") + "\\" + "abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
           try {
             if (!err) {
+
+              counter++;
+
               // Daten aus der abas-window-watcher.exe
               // Liste der offenen Fenster
               var processes = JSON.parse(text);
@@ -198,14 +208,6 @@ if (contents) {
                         // als inaktiv markieren
                         foo.active = false;
                         windows[j] = foo;
-
-                        var status = {};
-                        status.windowtitle = foo.Title;
-                        status.windowid = foo.ProcessId;
-                        status.windowstatus = "closed";
-
-                        sendStatus(status);
-
                       }
                     } else {
                       // für das Inaktive Fenster den Zeitraum seit dem Schließen berechnen
@@ -224,6 +226,13 @@ if (contents) {
 
                   // offene Fenster prüfen
                   $.each(data, function(i, val) {
+
+                    // offene Fenster ins elasticsearch übertragen
+                    if(settings.elasticsearch && settings.elasticsearch.every && (counter%settings.elasticsearch.every)==0){
+                      var status = {};
+                      status.windowtitle = val.Title;
+                      sendStatus(status);
+                    }
 
                     var found = false;
                     // alle bekannten Fenster durchgehen
