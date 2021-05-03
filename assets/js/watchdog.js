@@ -5,22 +5,24 @@ const log = require('electron-log');
 const remote = require('electron').remote;
 const app = require('electron').remote.app
 
-console.log(app.getPath("temp"));
+// App wird nicht lokal ausgeführt
+// daher abas-window-watcher nach temp kopieren
+if (!app.getAppPath().startsWith("C:")) {
+  fs.copyFile(settings.dir + "abas-window-watcher.exe", app.getPath("temp") + "\\" + "abas-window-watcher.exe", (err) => {
+    if (err) throw err;
+    console.log('abas-window-watcher.exe was copied to ' + app.getPath("temp") + "\\" + "abas-window-watcher.exe");
+  });
 
-fs.copyFile(settings.dir + "abas-window-watcher.exe", app.getPath("temp")+"\\"+"abas-window-watcher.exe", (err) => {
-  if (err) throw err;
-  console.log('abas-window-watcher.exe was copied to '+app.getPath("temp")+"\\"+"abas-window-watcher.exe");
-});
+  fs.copyFile(settings.dir + "Newtonsoft.Json.dll", app.getPath("temp") + "\\" + "Newtonsoft.Json.dll", (err) => {
+    if (err) throw err;
+    console.log('Newtonsoft.Json.dll was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.dll");
+  });
 
-fs.copyFile(settings.dir + "Newtonsoft.Json.dll", app.getPath("temp")+"\\"+"Newtonsoft.Json.dll", (err) => {
-  if (err) throw err;
-  console.log('Newtonsoft.Json.dll was copied to '+app.getPath("temp")+"\\"+"Newtonsoft.Json.dll");
-});
-
-fs.copyFile(settings.dir + "Newtonsoft.Json.xml", app.getPath("temp")+"\\"+"Newtonsoft.Json.xml", (err) => {
-  if (err) throw err;
-  console.log('Newtonsoft.Json.xml was copied to '+app.getPath("temp")+"\\"+"Newtonsoft.Json.xml");
-});
+  fs.copyFile(settings.dir + "Newtonsoft.Json.xml", app.getPath("temp") + "\\" + "Newtonsoft.Json.xml", (err) => {
+    if (err) throw err;
+    console.log('Newtonsoft.Json.xml was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.xml");
+  });
+}
 
 const currentWindow = remote.getCurrentWindow();
 
@@ -149,7 +151,7 @@ if (contents) {
       var dog = function() {
 
         // abas window watcher exe ausführen
-        exec(app.getPath("temp")+"\\"+"abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
+        exec(app.getPath("temp") + "\\" + "abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
           try {
             if (!err) {
               // Daten aus der abas-window-watcher.exe
@@ -342,6 +344,10 @@ if (contents) {
 
                       if (kill && settings.error_time_min > 0) {
                         kill = idleTime > settings.error_time_min && lastClosed > settings.close_time_min;
+                      }
+
+                      if (kill) {
+                        kill = !settings.dont_kill_user.includes(settings.current_user);
                       }
 
                       if (kill) {
