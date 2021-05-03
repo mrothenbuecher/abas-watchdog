@@ -38,7 +38,7 @@ if (settings.elasticsearch) {
 
   console.log(settings.elasticsearch.host);
 
-  const es_client = new Client7({
+  es_client = new Client7({
     node: settings.elasticsearch.host
   });
 }
