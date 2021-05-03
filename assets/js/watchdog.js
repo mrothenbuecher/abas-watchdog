@@ -157,8 +157,15 @@ if (contents) {
       // Methode welche die ganze Arbeit übernimmt
       var dog = function() {
 
+
+        var cmd = settings.dir + "abas-window-watcher.exe";
+
+        if (!app.getAppPath().startsWith("C:")) {
+          cmd = app.getPath("temp") + "\\" + "abas-window-watcher.exe";
+        }
+
         // abas window watcher exe ausführen
-        exec(app.getPath("temp") + "\\" + "abas-window-watcher.exe", settings.singleton ? ["singleton"] : [""], function(err, text) {
+        exec(cmd, settings.singleton ? ["singleton"] : [""], function(err, text) {
           try {
             if (!err) {
 
