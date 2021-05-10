@@ -46,7 +46,7 @@ if (settings.elasticsearch) {
 }
 
 // status an elasticsearch senden
-var sendStatus = async function(status) {
+var sendStatus = function(status) {
   if (es_client) {
 
     var d = new Date();
@@ -62,6 +62,12 @@ var sendStatus = async function(status) {
       type: 'status',
       body: status
     });
+  }
+};
+
+// status an elasticsearch senden
+var getLicenceCount = async function(status) {
+  if (es_client) {
 
     // Let's search!
     const {
@@ -195,6 +201,11 @@ if (contents) {
         // abas window watcher exe ausführen
         exec(cmd, settings.singleton ? ["singleton"] : [""], function(err, text) {
           try {
+
+            if(es_client){
+              getLicenceCount();
+            }
+
             if(es_client && settings.elasticsearch && settings.elasticsearch.start_by && settings.current_licence_count && settings.current_licence_count != 0){
               if(settings.current_licence_count < settings.elasticsearch.start_by){
                 throw "Jump"
@@ -423,7 +434,10 @@ if (contents) {
               toastr['error'](text, err);
             }
           } catch (e) {
-            console.error("Ausnahme:", e);
+            if(e === "Jump"){}
+            else{
+              console.error("Ausnahme:", e);
+            }
           } finally {
             setTimeout(dog, settings.refresh_interval_ms);
           }
