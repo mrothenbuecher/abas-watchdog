@@ -11,6 +11,7 @@
     "client":"clients",
     "open_since":"open since",
     "last_activity":"your last activity: ",
+    "lic_count":"currently used licences:",
     "dialog_title":"please release abas license",
     "dialog_warning":"If you do not need a license, please close",
     "dialog_error":"They are seemingly inactive. Close the abas ERP.",

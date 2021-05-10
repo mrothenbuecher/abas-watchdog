@@ -11,6 +11,7 @@
     "client":"Mandant",
     "open_since":"offen seit",
     "last_activity":"Ihre letzte Aktivität war vor ",
+    "lic_count":"aktuell verwendete Lizenzen:",
     "dialog_title":"abas Lizenz freigeben",
     "dialog_warning":"Falls sie keine Lizenz benötigen schließen sie bitte das abas ERP",
     "dialog_error":"Sie sind scheinbar inaktiv. Schließen sie das abas ERP.",

@@ -19,6 +19,7 @@ var settings = {
   "web_config": ""
 };
 const got = require('got');
+var deepExtend = require('deep-extend');
 
 var rem = require('electron').remote;
 
@@ -34,20 +35,12 @@ if (typeof rem !== 'undefined') {
   args = process.argv;
 }
 
-function extend() {
-  for (var i = 1; i < arguments.length; i++)
-    for (var key in arguments[i])
-      if (arguments[i].hasOwnProperty(key))
-        arguments[0][key] = arguments[i][key];
-  return arguments[0];
-}
-
 function requestSettings(url) {
   got.get(url, {
     responseType: 'json'
   }).then(response => {
     //console.log("Web Settings:",response,"Lang:",.lang);
-    settings = extend(settings, response.body);
+    deepExtend(settings, response.body);
     settings.web_config = url;
   }).catch(error => {
     console.error("Error while retrieving web config: ", error);
@@ -56,15 +49,6 @@ function requestSettings(url) {
   setTimeout(function() {
     requestSettings(url);
   }, 60000);
-}
-
-function str2ab(str) {
-  var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
-  var bufView = new Uint16Array(buf);
-  for (var i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
 }
 
 var fs = require('fs');
@@ -87,7 +71,7 @@ if (args.length >= 2 && args[args.length - 1].match(/\.json/)) {
 if (contents) {
   var jsonContent = JSON.parse(contents);
     // Einstellung aus Datei lesen
-  settings = extend(settings, jsonContent);
+  deepExtend(settings, jsonContent);
   // Settings aus dem Web abfragen
   if (settings.web_config) {
     requestSettings(settings.web_config);

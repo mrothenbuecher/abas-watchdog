@@ -31,20 +31,22 @@ var windowwashidden = true;
 
 var es_client = null;
 
-if (settings.elasticsearch) {
+var initEs = function() {
   const {
     Client: Client7
   } = require('es7')
 
-  console.log(settings.elasticsearch.host);
-
   es_client = new Client7({
     node: settings.elasticsearch.host
   });
+};
+
+if (settings.elasticsearch) {
+  initEs();
 }
 
 // status an elasticsearch senden
-var sendStatus = function(status) {
+var sendStatus = async function(status) {
   if (es_client) {
 
     var d = new Date();
@@ -61,6 +63,29 @@ var sendStatus = function(status) {
       body: status
     });
 
+    // Let's search!
+    const {
+      body
+    } = await es_client.search({
+      index: 'abas',
+      body: {
+        "size": 1,
+        "sort": {
+          "timestamp": "desc"
+        },
+        "query": {
+          "match_all": {}
+        }
+      }
+    })
+
+    if(body && body.hits && body.hits.hits && body.hits.hits.length == 1 ){
+      settings.current_licence_count = body.hits.hits[0]._source.count;
+      $('#lic-label').text($.i18n("lic_count") + settings.current_licence_count);
+    }else{
+      settings.current_licence_count = 0;
+      $('#lic-label').text("");
+    }
   }
 };
 
@@ -157,16 +182,24 @@ if (contents) {
       // Methode welche die ganze Arbeit übernimmt
       var dog = function() {
 
+        if (!es_client && settings.elasticsearch) {
+          initEs();
+        }
 
         var cmd = settings.dir + "abas-window-watcher.exe";
 
+        // Anwendung liegt nicht auf C:, ggf. Netzwerk freigabe daher von temp ausführen
         if (!app.getAppPath().startsWith("C:")) {
           cmd = app.getPath("temp") + "\\" + "abas-window-watcher.exe";
         }
-
         // abas window watcher exe ausführen
         exec(cmd, settings.singleton ? ["singleton"] : [""], function(err, text) {
           try {
+            if(es_client && settings.elasticsearch && settings.elasticsearch.start_by && settings.current_licence_count && settings.current_licence_count != 0){
+              if(settings.current_licence_count < settings.elasticsearch.start_by){
+                throw "Jump"
+              }
+            }
             if (!err) {
 
               counter++;
@@ -235,7 +268,7 @@ if (contents) {
                   $.each(data, function(i, val) {
 
                     // offene Fenster ins elasticsearch übertragen
-                    if(settings.elasticsearch && settings.elasticsearch.every && (counter%settings.elasticsearch.every)==0){
+                    if (settings.elasticsearch && settings.elasticsearch.ticks && (counter % settings.elasticsearch.ticks) == 0) {
                       var status = {};
                       status.windowtitle = val.Title;
                       sendStatus(status);
@@ -329,7 +362,7 @@ if (contents) {
 
                     // Warnung ausgeben
                     if (settings.warning_time_min > 0 && idleTime > settings.warning_time_min && lastClosed > settings.close_time_min) {
-                      log.debug("Warnungsdialog: " + settings.warning_time_min + " " + idleTime + " " + lastClosed + " " + settings.close_time_min);
+                      //log.debug("Warnungsdialog: " + settings.warning_time_min + " " + idleTime + " " + lastClosed + " " + settings.close_time_min);
                       if (!notif) {
                         notif = new window.Notification($.i18n("dialog_title"), {
                           body: $.i18n("dialog_warning"),
@@ -370,7 +403,7 @@ if (contents) {
                         exec(settings.dir + "abas-window-watcher.exe", ["kill", JSON.stringify(settings.dont_kill)], function(err, text) {
                           if (err) {
                             //console.log("kill Error:", err, text);
-                            log.error("Fehler beim Beenden des Programss: " + err + "\n" + text);
+                            log.error("Fehler beim Beenden des Programms: " + err + "\n" + text);
                           }
                         });
                         disableDialog();
