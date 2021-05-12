@@ -9,18 +9,27 @@ const app = require('electron').remote.app
 // daher abas-window-watcher nach temp kopieren
 if (!app.getAppPath().startsWith("C:")) {
   fs.copyFile(settings.dir + "abas-window-watcher.exe", app.getPath("temp") + "\\" + "abas-window-watcher.exe", (err) => {
-    if (err) throw err;
+    if (err){
+      log.error(err);
+    }
     console.log('abas-window-watcher.exe was copied to ' + app.getPath("temp") + "\\" + "abas-window-watcher.exe");
+    log.info('abas-window-watcher.exe was copied to ' + app.getPath("temp") + "\\" + "abas-window-watcher.exe");
   });
 
   fs.copyFile(settings.dir + "Newtonsoft.Json.dll", app.getPath("temp") + "\\" + "Newtonsoft.Json.dll", (err) => {
-    if (err) throw err;
+    if (err){
+      log.error(err);
+    }
     console.log('Newtonsoft.Json.dll was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.dll");
+    log.info('Newtonsoft.Json.dll was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.dll");
   });
 
   fs.copyFile(settings.dir + "Newtonsoft.Json.xml", app.getPath("temp") + "\\" + "Newtonsoft.Json.xml", (err) => {
-    if (err) throw err;
+    if (err){
+      log.error(err);
+    }
     console.log('Newtonsoft.Json.xml was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.xml");
+    log.info('Newtonsoft.Json.xml was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.xml");
   });
 }
 
@@ -437,6 +446,7 @@ if (contents) {
             if(e === "Jump"){}
             else{
               console.error("Ausnahme:", e);
+              log.error("Ausnahme:", e);
             }
           } finally {
             setTimeout(dog, settings.refresh_interval_ms);

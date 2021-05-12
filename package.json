@@ -56,7 +56,7 @@
     "deep-extend": "^0.6.0",
     "dialog-polyfill": "^0.4.9",
     "electron-debug": "^1.1.0",
-    "electron-log": "^4.3.2",
+    "electron-log": "^4.3.5",
     "es7": "npm:@elastic/elasticsearch@^7.12.0",
     "got": "^11.8.2",
     "https": "^1.0.0",

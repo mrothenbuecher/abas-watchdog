@@ -1,5 +1,9 @@
 var fs = require('fs');
-const electron = require('electron')
+const electron = require('electron');
+const log = require('electron-log');
+const { dialog } = require('electron')
+
+log.info("starte watchdog");
 
 global.sharedObject = {
   prop1: process.argv
@@ -154,3 +158,20 @@ app.on('activate', function() {
     createWindow()
   }
 })
+
+process.on("uncaughtException", (err) => {
+
+    log.error(err);
+
+   const messageBoxOptions = {
+        type: "error",
+        title: "Fehler",
+        message: err
+    };
+    dialog.showMessageBoxSync(messageBoxOptions);
+
+    // I believe it used to be the case that doing a "throw err;" here would
+    // terminate the process, but now it appears that you have to use's Electron's
+    // app module to exit (process.exit(1) seems to not terminate the process)
+    app.exit(1);
+});
