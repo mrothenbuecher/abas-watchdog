@@ -17,7 +17,8 @@ if (fs.existsSync("watchdog")) {
 // dafür sorgen das die devtools angezeigt werden
 
 require('electron-debug')({
-  showDevTools: false
+  showDevTools: false,
+  isEnabled: true
 });
 
 
@@ -45,7 +46,8 @@ function createWindow() {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      contextIsolation: false
     }
   });
   mainWindow.setMenu(null);
@@ -81,7 +83,7 @@ function createWindow() {
       label: 'devtools',
       type: 'normal',
       click: function() {
-        mainWindow.openDevTools();
+        mainWindow.webContents.openDevTools();
       }
     });
   }

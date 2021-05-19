@@ -7,9 +7,10 @@ const app = require('electron').remote.app
 
 // App wird nicht lokal ausgeführt
 // daher abas-window-watcher nach temp kopieren
+
 if (!app.getAppPath().startsWith("C:")) {
   fs.copyFile(settings.dir + "abas-window-watcher.exe", app.getPath("temp") + "\\" + "abas-window-watcher.exe", (err) => {
-    if (err){
+    if (err) {
       log.error(err);
     }
     console.log('abas-window-watcher.exe was copied to ' + app.getPath("temp") + "\\" + "abas-window-watcher.exe");
@@ -17,7 +18,7 @@ if (!app.getAppPath().startsWith("C:")) {
   });
 
   fs.copyFile(settings.dir + "Newtonsoft.Json.dll", app.getPath("temp") + "\\" + "Newtonsoft.Json.dll", (err) => {
-    if (err){
+    if (err) {
       log.error(err);
     }
     console.log('Newtonsoft.Json.dll was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.dll");
@@ -25,13 +26,14 @@ if (!app.getAppPath().startsWith("C:")) {
   });
 
   fs.copyFile(settings.dir + "Newtonsoft.Json.xml", app.getPath("temp") + "\\" + "Newtonsoft.Json.xml", (err) => {
-    if (err){
+    if (err) {
       log.error(err);
     }
     console.log('Newtonsoft.Json.xml was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.xml");
     log.info('Newtonsoft.Json.xml was copied to ' + app.getPath("temp") + "\\" + "Newtonsoft.Json.xml");
   });
 }
+
 
 const currentWindow = remote.getCurrentWindow();
 
@@ -79,27 +81,32 @@ var getLicenceCount = async function(status) {
   if (es_client) {
 
     // Let's search!
-    const {
-      body
-    } = await es_client.search({
-      index: 'abas',
-      body: {
-        "size": 1,
-        "sort": {
-          "timestamp": "desc"
-        },
-        "query": {
-          "match_all": {}
+    try {
+      const {
+        body
+      } = await es_client.search({
+        index: 'abas',
+        body: {
+          "size": 1,
+          "sort": {
+            "timestamp": "desc"
+          },
+          "query": {
+            "match_all": {}
+          }
         }
-      }
-    })
+      })
 
-    if(body && body.hits && body.hits.hits && body.hits.hits.length == 1 ){
-      settings.current_licence_count = body.hits.hits[0]._source.count;
-      $('#lic-label').text($.i18n("lic_count") + settings.current_licence_count);
-    }else{
-      settings.current_licence_count = 0;
-      $('#lic-label').text("");
+      if (body && body.hits && body.hits.hits && body.hits.hits.length == 1) {
+        settings.current_licence_count = body.hits.hits[0]._source.count;
+        $('#lic-label').text($.i18n("lic_count") + settings.current_licence_count);
+      } else {
+        settings.current_licence_count = 0;
+        $('#lic-label').text("");
+      }
+    } catch (e) {
+      console.error(e);
+      log.error(e);
     }
   }
 };
@@ -204,19 +211,21 @@ if (contents) {
         var cmd = settings.dir + "abas-window-watcher.exe";
 
         // Anwendung liegt nicht auf C:, ggf. Netzwerk freigabe daher von temp ausführen
+
         if (!app.getAppPath().startsWith("C:")) {
           cmd = app.getPath("temp") + "\\" + "abas-window-watcher.exe";
         }
+
         // abas window watcher exe ausführen
         exec(cmd, settings.singleton ? ["singleton"] : [""], function(err, text) {
           try {
 
-            if(es_client){
+            if (es_client) {
               getLicenceCount();
             }
 
-            if(es_client && settings.elasticsearch && settings.elasticsearch.start_by && settings.current_licence_count && settings.current_licence_count != 0){
-              if(settings.current_licence_count < settings.elasticsearch.start_by){
+            if (es_client && settings.elasticsearch && settings.elasticsearch.start_by && settings.current_licence_count && settings.current_licence_count != 0) {
+              if (settings.current_licence_count < settings.elasticsearch.start_by) {
                 throw "Jump"
               }
             }
@@ -443,8 +452,7 @@ if (contents) {
               toastr['error'](text, err);
             }
           } catch (e) {
-            if(e === "Jump"){}
-            else{
+            if (e === "Jump") {} else {
               console.error("Ausnahme:", e);
               log.error("Ausnahme:", e);
             }
