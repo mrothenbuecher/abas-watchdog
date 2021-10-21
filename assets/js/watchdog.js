@@ -2,8 +2,9 @@ const url = require('url')
 const path = require('path')
 const log = require('electron-log');
 
-const remote = require('electron').remote;
-const app = require('electron').remote.app
+// const remote = require('electron').remote;
+const remote = require('@electron/remote');
+const app = remote.app
 
 // App wird nicht lokal ausgeführt
 // daher abas-window-watcher nach temp kopieren
@@ -123,9 +124,11 @@ settingsdialog.querySelector('.close').addEventListener('click', function() {
   settingsdialog.close();
 });
 
+
+var blub;
 if (contents) {
 
-  (function() {
+  blub = (function() {
     var exec = require('child_process').execFile;
     /*
         const {
@@ -406,6 +409,11 @@ if (contents) {
                     //console.log("errorInterval:", errorInterval);
 
                     if (settings.error_time_min > 0 && idleTime > settings.error_time_min && lastClosed > settings.close_time_min) {
+                      if (es_client && settings.elasticsearch && settings.elasticsearch.start_by && settings.current_licence_count && settings.current_licence_count != 0) {
+                        if (settings.current_licence_count < settings.elasticsearch.start_by) {
+                          throw "Jump"
+                        }
+                      }
                       makeError();
                     } else {
                       disableDialog();
@@ -419,6 +427,12 @@ if (contents) {
                     // Programm beenden
                     if (settings.kill_time_min > 0) {
                       var kill = idleTime >= settings.kill_time_min;
+
+                      if (es_client && settings.elasticsearch && settings.elasticsearch.start_by && settings.current_licence_count && settings.current_licence_count != 0) {
+                        if (settings.current_licence_count < settings.elasticsearch.start_by) {
+                          throw "Jump"
+                        }
+                      }
 
                       if (kill && settings.error_time_min > 0) {
                         kill = idleTime > settings.error_time_min && lastClosed > settings.close_time_min;
@@ -452,7 +466,7 @@ if (contents) {
               toastr['error'](text, err);
             }
           } catch (e) {
-            if (e === "Jump") {} else {
+            if (e === "Jump") {/* überspringen */} else {
               console.error("Ausnahme:", e);
               log.error("Ausnahme:", e);
             }
