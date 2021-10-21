@@ -1,7 +1,9 @@
 var fs = require('fs');
 const electron = require('electron');
 const log = require('electron-log');
-const { dialog } = require('electron')
+const { dialog } = require('electron');
+
+require('@electron/remote/main').initialize()
 
 log.info("starte watchdog");
 
@@ -127,6 +129,7 @@ function createWindow() {
   });
 
   mainWindow.hide();
+  require("@electron/remote/main").enable(mainWindow.webContents)
 }
 
 /*
