@@ -226,12 +226,13 @@ if (contents) {
             if (es_client) {
               getLicenceCount();
             }
-
+            /*
             if (es_client && settings.elasticsearch && settings.elasticsearch.start_by && settings.current_licence_count && settings.current_licence_count != 0) {
               if (settings.current_licence_count < settings.elasticsearch.start_by) {
                 throw "Jump"
               }
             }
+            */
             if (!err) {
 
               counter++;
